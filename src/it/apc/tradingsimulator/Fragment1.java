@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -14,9 +16,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,21 +30,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class Fragment1 extends Fragment {
 
+	protected static final String PACKAGE = "TRADINGSIMULATOR";
 	private ListView lv;
 	ArrayList<StockRow> rowlist = new ArrayList<StockRow>();
-	ArrayList<Stock> list = new ArrayList<Stock>();
+	HashMap<String, Stock> list = new HashMap<String, Stock>();
 	private CustomAdapter adapter;
 	private ProgressBar pb;
 
 	public Fragment1() {}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment1, container, false);
@@ -46,12 +57,30 @@ public class Fragment1 extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
 
         try {
-            list = (ArrayList<Stock>) ObjectSerializer.deserialize(prefs.getString(MainActivity.STOCK_LIST_TAG, ObjectSerializer.serialize(new ArrayList<Stock>())));
+            list = (HashMap<String, Stock>) ObjectSerializer.deserialize(prefs.getString(MainActivity.STOCK_LIST_TAG, ObjectSerializer.serialize(new HashMap<String, Stock>())));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+ 		final CircleButton addbt = (CircleButton) rootView.findViewById(R.id.add);
+       
 		lv = (ListView) rootView.findViewById(R.id.listView);
+		lv.setOnScrollListener(new OnScrollListener() {
+			private int prevlvy = 0;
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				if(prevlvy < firstVisibleItem){
+					addbt.setVisibility(View.GONE);
+				}
+				if(prevlvy > firstVisibleItem){
+					addbt.setVisibility(View.VISIBLE);
+				}
+				prevlvy = firstVisibleItem;
+			}
+		});
 		adapter = new CustomAdapter(getActivity(), R.layout.stocksrow, rowlist);
 		pb = (ProgressBar) rootView.findViewById(R.id.progressBar);
 		pb.setVisibility(View.GONE);
@@ -62,20 +91,43 @@ public class Fragment1 extends Fragment {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				
+				Intent ed = new Intent(getActivity(), StockActivity.class);
+				ed.putExtra("STOCK", list.get(rowlist.get(arg2).getId()));
+				startActivityForResult(ed, 0xED);
+				getActivity().overridePendingTransition(0, 0);
 			}
 		});
-		CircleButton addbt = (CircleButton) rootView.findViewById(R.id.add);
 		addbt.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				list.add(new Stock("GOOG", 0, 0));
-				list.add(new Stock("AAPL", 0, 10));
-				list.add(new Stock("MSFT", 0, 0));
-				new LoadListTask().execute(list);
+				int[] screenLocation = new int[2];
+	            v.getLocationOnScreen(screenLocation);
+	            Intent subActivity = new Intent(getActivity(), AddStockActivity.class);
+	            Bundle scaleBundle = ActivityOptions.makeScaleUpAnimation(v, screenLocation[0], screenLocation[1], v.getWidth(), v.getHeight()).toBundle();
+                getActivity().startActivityForResult(subActivity, 0xADD, scaleBundle);
 			}
 		});
 		return rootView;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 0xADD && resultCode == Activity.RESULT_OK) {
+			add((Stock) data.getSerializableExtra("STOCK"));
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void add(Stock s) {
+		if(!list.containsKey(s.getId())){
+			list.put(s.getId(), s);
+			new LoadListTask().execute(list);
+			new SaveTask().execute((Void) null);
+		}
+		else {
+			Toast.makeText(getActivity(), "Stock already added!", Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	public void Save(){
@@ -90,13 +142,24 @@ public class Fragment1 extends Fragment {
 	    editor.commit();
 	}
 	
-	private class LoadListTask extends AsyncTask<ArrayList<Stock>, StockRow, Void> {
+	private class SaveTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			Save();
+			return null;
+		}
+		
+	}
+	
+	private class LoadListTask extends AsyncTask<HashMap<String, Stock>, StockRow, Void> {
 
 	    @Override
 	    protected void onPostExecute(Void unused) {
 	    	lv.setEnabled(true);
 	        lv.setAlpha(1f);
 	        pb.setVisibility(View.GONE);
+		    adapter.notifyDataSetChanged();
 	    }
 
 	    @Override
@@ -104,75 +167,77 @@ public class Fragment1 extends Fragment {
 	        lv.setEnabled(false);
 	        lv.setAlpha(0.25f);
 	        pb.setVisibility(View.VISIBLE);
+	        adapter.clear();
 	    }
 
-	    @Override
-	    protected Void doInBackground(ArrayList<Stock>... params) {
+	    @SuppressWarnings("unchecked")
+		@Override
+	    protected Void doInBackground(HashMap<String, Stock>... params) {
 	    	
 	    	HttpClient httpClient = new DefaultHttpClient();
 	        HttpContext localContext = new BasicHttpContext();
-	        
-	        for (int j = 0; j < params[0].size(); j++) {
-				
-	        	Stock stock = params[0].get(j);
-	        	
-	        	StockRow item = new StockRow(stock.getId(), "", stock.getLastPrice(), 0, 0, stock.getQuantity());
-		        
-	        	HttpGet httpGet = new HttpGet("http://download.finance.yahoo.com/d/quotes.csv?s=" + stock.getId() + "&f=n0l1c1p2&e=.csv");
-		        HttpResponse response = null;
-				try {
-					response = httpClient.execute(httpGet, localContext);
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				InputStream is = null;
-				try {
-					is = response.getEntity().getContent();
-				} catch (IllegalStateException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-				try {
-			        String line = reader.readLine();
-			        String[] RowData = line.split(",");
-			        String name = RowData[0];
-			        item.setName(name.substring(1, name.length() - 1));
-			        item.setPrice(Double.parseDouble(RowData[1]));
-			        stock.setLastPrice(Double.parseDouble(RowData[1]));
-			        list.set(j, stock);
-			        item.setChange(Double.parseDouble(RowData[2]));
-			        String pchange = RowData[3];
-			        item.setPchange(Double.parseDouble(pchange.substring(1, pchange.length() - 2)));
-			    }
-			    catch (IOException ex) {
-			        // handle exception
-			    }
-			    finally {
-			        try {
-			            is.close();
-			        }
-			        catch (IOException e) {
-			            // handle exception
-			        }
-			    }
-        	
-	            publishProgress(item);
-	        }
+	        if (!params[0].isEmpty()) {
+				Set<String> ids = params[0].keySet();
+				for (String stock : ids) {
 
-	        return (null);
+					StockRow item = new StockRow(stock, "", params[0]
+							.get(stock).getLastPrice(), 0, 0, params[0].get(
+							stock).getQuantity());
+
+					HttpGet httpGet = new HttpGet(
+							"http://download.finance.yahoo.com/d/quotes.csv?s="
+									+ Uri.encode(stock) + "&f=n0l1c1p2&e=.csv");
+					HttpResponse response = null;
+					try {
+						response = httpClient.execute(httpGet, localContext);
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					InputStream is = null;
+					try {
+						is = response.getEntity().getContent();
+					} catch (IllegalStateException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(is));
+					try {
+						String line = reader.readLine();
+						String[] RowData = line.split(",");
+						String name = RowData[0];
+						item.setName(name.substring(1, name.length() - 1));
+						item.setPrice(Double.parseDouble(RowData[1]));
+						params[0].get(stock).setLastPrice(
+								Double.parseDouble(RowData[1]));
+						list.put(stock, params[0].get(stock));
+						item.setChange(Double.parseDouble(RowData[2]));
+						String pchange = RowData[3];
+						item.setPchange(Double.parseDouble(pchange.substring(1,
+								pchange.length() - 2)));
+					} catch (IOException ex) {
+						// handle exception
+					} finally {
+						try {
+							is.close();
+						} catch (IOException e) {
+							// handle exception
+						}
+					}
+
+					publishProgress(item);
+				}
+			}
+			return (null);
 	    }
 
 	    @Override
 	    protected void onProgressUpdate(StockRow... items) {
 	        rowlist.add(items[0]);
-	        adapter.notifyDataSetChanged();
 	    }
 	}
 }

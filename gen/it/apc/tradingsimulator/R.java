@@ -29,6 +29,9 @@ containing a value of this type.
          */
         public static final int cb_pressed_ring_width=0x7f010001;
     }
+    public static final class color {
+        public static final int bkg=0x7f040000;
+    }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
 
@@ -36,45 +39,59 @@ containing a value of this type.
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f040000;
-        public static final int activity_vertical_margin=0x7f040001;
+        public static final int activity_horizontal_margin=0x7f050000;
+        public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
         public static final int ic_action_add=0x7f020000;
-        public static final int ic_action_go=0x7f020001;
-        public static final int ic_action_own=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int ic_launcher_web=0x7f020004;
+        public static final int ic_action_add_l=0x7f020001;
+        public static final int ic_action_core_overflow=0x7f020002;
+        public static final int ic_action_go=0x7f020003;
+        public static final int ic_action_own=0x7f020004;
+        public static final int ic_action_search=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
+        public static final int ic_launcher_web=0x7f020007;
     }
     public static final class id {
-        public static final int action_settings=0x7f08000c;
-        public static final int add=0x7f080003;
-        public static final int change=0x7f080009;
-        public static final int id=0x7f080006;
-        public static final int image=0x7f08000b;
-        public static final int imageView1=0x7f080005;
-        public static final int listView=0x7f080002;
-        public static final int name=0x7f080007;
-        public static final int pager=0x7f080000;
-        public static final int pager_title_strip=0x7f080001;
-        public static final int pchange=0x7f08000a;
-        public static final int price=0x7f080008;
-        public static final int progressBar=0x7f080004;
+        public static final int action_settings=0x7f090011;
+        public static final int add=0x7f09000c;
+        public static final int box=0x7f090005;
+        public static final int change=0x7f09000e;
+        public static final int editText=0x7f090006;
+        public static final int id=0x7f090002;
+        public static final int image=0x7f090010;
+        public static final int imageView1=0x7f09000d;
+        public static final int listView=0x7f09000b;
+        public static final int listView1=0x7f090009;
+        public static final int name=0x7f090003;
+        public static final int pager=0x7f090000;
+        public static final int pager_title_strip=0x7f090001;
+        public static final int pchange=0x7f09000f;
+        public static final int price=0x7f090004;
+        public static final int progressBar=0x7f09000a;
+        public static final int searchbtn=0x7f090007;
+        public static final int view1=0x7f090008;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int fragment1=0x7f030001;
-        public static final int fragment2=0x7f030002;
-        public static final int stocksrow=0x7f030003;
+        public static final int activity_stock=0x7f030001;
+        public static final int add_stock_row=0x7f030002;
+        public static final int addstocks=0x7f030003;
+        public static final int fragment1=0x7f030004;
+        public static final int fragment2=0x7f030005;
+        public static final int stocksrow=0x7f030006;
     }
     public static final class menu {
-        public static final int main=0x7f070000;
+        public static final int main=0x7f080000;
     }
     public static final class string {
-        public static final int action_settings=0x7f050001;
-        public static final int app_name=0x7f050000;
-        public static final int title_section1=0x7f050002;
-        public static final int title_section2=0x7f050003;
+        public static final int action_settings=0x7f060001;
+        public static final int app_name=0x7f060000;
+        public static final int hello_world=0x7f060005;
+        public static final int title_activity_add_stock=0x7f060004;
+        public static final int title_activity_stock=0x7f060006;
+        public static final int title_section1=0x7f060002;
+        public static final int title_section2=0x7f060003;
     }
     public static final class style {
         /** 
@@ -87,22 +104,18 @@ containing a value of this type.
             backward-compatibility can go here.
         
 
-        Base application theme for API 11+. This theme completely replaces
-        AppBaseTheme from res/values/styles.xml on API 11+ devices.
-    
- API 11 theme customizations can go here. 
-
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f060000;
+        public static final int AppBaseTheme=0x7f070000;
         /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f060001;
+        public static final int AppTheme=0x7f070001;
+        public static final int MaterialActionBar=0x7f070003;
+        public static final int OverFlow=0x7f070002;
     }
     public static final class styleable {
         /** Attributes that can be used with a CircleButton.

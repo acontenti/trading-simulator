@@ -35,6 +35,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="4dp"
         android:text="577.24"
+        android:textColor="@color/bkg"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
