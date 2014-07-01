@@ -21,6 +21,7 @@
 		<item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="android:windowBackground">@color/bkg</item>
+		<item name="android:typeface">monospace</item>
 	</style>
 
 	<style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">

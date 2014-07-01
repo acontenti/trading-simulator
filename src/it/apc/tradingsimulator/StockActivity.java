@@ -10,12 +10,19 @@ import android.view.MenuItem;
 public class StockActivity extends Activity {
 
 	private Stock stock;
+	private String id;
+	private int q = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stock);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_action_go));
+		stock = (Stock) getIntent().getSerializableExtra("STOCK");
+		id = stock.getId();
+		q  = stock.getQuantity();
+		setTitle(id);
 	}
 	
 	@Override

@@ -36,6 +36,7 @@
         android:layout_margin="4dp"
         android:text="577.24"
         android:textColor="@color/bkg"
+        android:textStyle="bold"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -44,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="4dp"
+        android:textStyle="bold"
         android:text="+1.24" />
 
     <TextView
@@ -52,6 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="4dp"
+        android:textStyle="bold"
         android:text="0.22" />
 
     <ImageView

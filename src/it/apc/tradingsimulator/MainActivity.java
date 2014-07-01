@@ -22,9 +22,11 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		FontsOverride.setDefaultFont(this, "MONOSPACE", "Roboto_Light.ttf");
 		setContentView(R.layout.activity_main);
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
 	}
