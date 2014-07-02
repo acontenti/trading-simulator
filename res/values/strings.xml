@@ -7,4 +7,33 @@
     <string name="title_activity_add_stock">AddStockActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_stock">Stock Details</string>
+    <string name="change">Change</string>
+    <string name="changep">Change (%)</string>
+    <string name="price">Price</string>
+    <string name="sfloat">Shares Float</string>
+    <string name="volume">Volume</string>
+    <string name="capitalization">Capitalization</string>
+    <string name="maxd">Max. day</string>
+    <string name="mind">Min. day</string>
+    <string name="maxy">Max. year</string>
+    <string name="miny">Min. year</string>
+    <string name="close">Last Close</string>
+    <string name="open">Open</string>
+    <string-array name="chartTimes">
+        <item>1 Day</item>
+        <item>5 Day</item>
+        <item>3 Months</item>
+        <item>6 Months</item>
+        <item>1 Year</item>
+        <item>2 Years</item>
+        <item>5 Years</item>
+        <item>Maximum</item>
+    </string-array>
+    <string-array name="chartTypes">
+        <item>Line</item>
+        <item>Bar</item>
+        <item>Candle</item>
+    </string-array>
+        <string name="ownedshares">Owned shares</string>
+        <string name="value">Value</string>
 </resources>
