@@ -1,5 +1,6 @@
 package it.apc.tradingsimulator;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -37,11 +38,15 @@ public class CustomAdapter extends ArrayAdapter<StockRow> {
 	        TextView tt4 = (TextView) v.findViewById(R.id.pchange);
 	        ImageView im = (ImageView) v.findViewById(R.id.image);
 	        
+	        NumberFormat nf = NumberFormat.getInstance();
+	        nf.setMaximumFractionDigits(2);
+	        nf.setMinimumFractionDigits(2);
+	        
 	        tt0.setText(p.getId());
 	        tt1.setText(p.getName());
-	        tt2.setText(String.valueOf(p.getPrice()));
-	        tt3.setText(String.valueOf(p.getChange()));
-	        tt4.setText(p.getPchange() + "%");
+	        tt2.setText(nf.format(p.getPrice()));
+	        tt3.setText(nf.format(p.getChange()));
+	        tt4.setText(nf.format(p.getPchange()) + "%");
 	        if (p.getChange() < 0) {
 				tt3.setTextColor(Color.RED);
 				tt4.setTextColor(Color.RED);

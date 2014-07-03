@@ -240,4 +240,10 @@ public class Fragment1 extends Fragment {
 	        rowlist.add(items[0]);
 	    }
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void update(){
+		new LoadListTask().execute(list);
+		new SaveTask().execute((Void) null);
+	}
 }

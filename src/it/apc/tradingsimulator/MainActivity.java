@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.MenuItem;
 
 public class MainActivity extends FragmentActivity {
 
@@ -17,7 +18,8 @@ public class MainActivity extends FragmentActivity {
 	public static String SHARED_PREFS_FILE = "data";
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
-	public Fragment fragment1 = new Fragment();
+	public Fragment1 fragment1 = new Fragment1();
+	public Fragment2 fragment2 = new Fragment2();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,20 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // Respond to the action bar's Up/Home button
+	    case android.R.id.home:
+	        finish();
+	        return true;
+	    case R.id.action_update:
+	    	fragment1.update();
+	    	return true;
+	    }
+	    return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		fragment1.onActivityResult(arg0, arg1, arg2);
 	}
@@ -56,10 +72,11 @@ public class MainActivity extends FragmentActivity {
 			switch (position) {
 			case 0:
 				fragment  = new Fragment1();
-				fragment1 = fragment;
+				fragment1 = (Fragment1) fragment;
 				break;
 			case 1:
 				fragment = new Fragment2();
+				fragment2  = (Fragment2) fragment;
 				break;
 			}
 			return fragment;

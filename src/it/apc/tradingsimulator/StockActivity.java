@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -15,17 +16,28 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import android.R.color;
 import android.app.Activity;
+import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class StockActivity extends Activity {
@@ -33,10 +45,35 @@ public class StockActivity extends Activity {
 	private Stock stock;
 	private String id;
 	private int q = 0;
-	private TextView nt;
 	private ProgressBar pb;
-	private ScrollView sv;
-
+	private LinearLayout sv;
+	HashMap<String, Object> data = new HashMap<String, Object>();
+	HashMap<String, String> time = new HashMap<String, String>();
+	HashMap<String, String> type = new HashMap<String, String>();
+	private Spinner times;
+	private Spinner types;
+	private TextView nt;
+	private TextView set;
+	private TextView pt;
+	private TextView ct;
+	private TextView ost;
+	private TextView vt;
+	private TextView cpt;
+	private TextView vlt;
+	private TextView ot;
+	private TextView lct;
+	private TextView mxdt;
+	private TextView mndt;
+	private TextView mxyt;
+	private TextView mnyt;
+	private ImageView chart;
+	private CircleButton sell;
+	private CircleButton buy;
+	private CircleButton delete;
+	public boolean firstrun = true;
+	private double price = 0;
+	private int sfloat = 0;
+	private double balance = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,9 +84,107 @@ public class StockActivity extends Activity {
 		id = stock.getId();
 		q  = stock.getQuantity();
 		nt = (TextView) findViewById(R.id.name);
+		set = (TextView) findViewById(R.id.stockexchange);
+		pt = (TextView) findViewById(R.id.price);
+		ct = (TextView) findViewById(R.id.change);
+		ost = (TextView) findViewById(R.id.owned);
+		vt = (TextView) findViewById(R.id.value);
+		cpt = (TextView) findViewById(R.id.capitalization);
+		vlt = (TextView) findViewById(R.id.volume);
+		ot = (TextView) findViewById(R.id.open);
+		lct = (TextView) findViewById(R.id.close);
+		mxdt = (TextView) findViewById(R.id.maxd);
+		mndt = (TextView) findViewById(R.id.mind);
+		mxyt = (TextView) findViewById(R.id.maxy);
+		mnyt = (TextView) findViewById(R.id.miny);
+		chart = (ImageView) findViewById(R.id.chart);
 		pb = (ProgressBar) findViewById(R.id.progressBar);
 		pb.setVisibility(View.GONE);
-		sv = (ScrollView) findViewById(R.id.scrollView1);
+		sv = (LinearLayout) findViewById(R.id.box);
+		OnItemSelectedListener listener = new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				new LoadDetailsTask().execute((Void) null);
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {}
+		};
+		times = (Spinner) findViewById(R.id.chartTimes);
+		times.setOnItemSelectedListener(listener);
+		types = (Spinner) findViewById(R.id.chartTypes);
+		types.setOnItemSelectedListener(listener);
+		String[] chartTimes = getResources().getStringArray(R.array.chartTimes);
+		String[] chartTimesValues = getResources().getStringArray(R.array.chartTimesValues);
+		for (int i = 0; i < chartTimes.length; i++) {
+			time.put(chartTimes[i], chartTimesValues[i]);
+		}
+		String[] chartTypes = getResources().getStringArray(R.array.chartTypes);
+		String[] chartTypesValues = getResources().getStringArray(R.array.chartTypesValues);
+		for (int i = 0; i < chartTypes.length; i++) {
+			type.put(chartTypes[i], chartTypesValues[i]);
+		}
+		buy = (CircleButton) findViewById(R.id.circleButton_buy);
+		buy.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showBuyPrompt(v);
+			}
+		});
+		sell = (CircleButton) findViewById(R.id.circleButton_sell);
+		sell.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (q > 0) {
+					showSellPrompt();
+				}
+				else {
+					AlertDialog.Builder builder = new AlertDialog.Builder(StockActivity.this);
+					builder.setMessage(R.string.dialog_message).setTitle(android.R.string.dialog_alert_title);
+					builder.setPositiveButton(R.string.dialog_continue, new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				               showSellPrompt();
+				           }
+				       });
+					builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				               // User cancelled the dialog
+				           }
+				       });
+					builder.show();
+				}
+			}
+		});
+		delete = (CircleButton) findViewById(R.id.circleButton_delete);
+		delete.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+		new LoadDetailsTask().execute((Void) null);
+	}
+	
+	protected void showBuyPrompt(View v) {
+		Intent bi = new Intent(this, BuyActivity.class);
+		bi.putExtra("price", price);
+		bi.putExtra("float", sfloat);
+		bi.putExtra("balance", balance);
+		int[] screenLocation = new int[2];
+        v.getLocationOnScreen(screenLocation);
+        Bundle scaleBundle = ActivityOptions.makeScaleUpAnimation(v, screenLocation[0], screenLocation[1], v.getWidth(), v.getHeight()).toBundle();
+		startActivityForResult(bi, 0xB, scaleBundle);
+	}
+
+	protected void showSellPrompt() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
 	}
 	
 	@Override
@@ -59,6 +194,9 @@ public class StockActivity extends Activity {
 	    case android.R.id.home:
 	        finish();
 	        return true;
+	    case R.id.action_update:
+	    	new LoadDetailsTask().execute((Void) null);
+	    	return true;
 	    }
 	    return super.onOptionsItemSelected(item);
 	}
@@ -82,16 +220,33 @@ public class StockActivity extends Activity {
 
 	    @Override
 	    protected void onPostExecute(HashMap<String, Object> map) {
+	        updateData(map);
 	    	sv.setEnabled(true);
 	        sv.setVisibility(View.VISIBLE);
+	        sv.setAlpha(1f);
 	        pb.setVisibility(View.GONE);
+			buy.setEnabled(true);
+			buy.setAlpha(1f);
+			sell.setEnabled(true);
+			sell.setAlpha(1f);
+			delete.setEnabled(true);
+			delete.setAlpha(1f);
 	    }
 
 	    @Override
 	    protected void onPreExecute() {
-	    	sv.setEnabled(false);
-	        sv.setVisibility(View.INVISIBLE);
-	        pb.setVisibility(View.VISIBLE);
+	    	if (firstrun) {
+				firstrun = false;
+				sv.setVisibility(View.INVISIBLE);
+			}
+	    	else {
+				sv.setAlpha(0.5f);
+			}
+			sv.setEnabled(false);
+			pb.setVisibility(View.VISIBLE);
+			buy.setEnabled(false);
+			sell.setEnabled(false);
+			delete.setEnabled(false);
 	    }
 
 		@Override
@@ -138,39 +293,67 @@ public class StockActivity extends Activity {
 				map.put("stockexchange", b[10]);
 				map.put("maxy", b[11]);
 				map.put("miny", b[12]);
-				int mFloat = Integer.parseInt(b[13]) * 1000000 + Integer.parseInt(b[14]) * 1000 + Integer.parseInt(b[15]);
+				String temp = b[13];
+				temp = temp.replaceAll("\\s+","");
+				int mFloat = Integer.parseInt(temp) * 1000000 + Integer.parseInt(b[14]) * 1000 + Integer.parseInt(b[15]);
 				map.put("float", mFloat);
+				String url = "http://chart.finance.yahoo.com/z?s=" + id + "&t=" + time.get(times.getSelectedItem()) + "&q=" + type.get(types.getSelectedItem()) + "&l=on&z=l";
+				map.put("chart", getBitmapFromURL(url));
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-/*			try {
-				String line = reader.readLine();
-				String[] RowData = line.split(",");
-				String name = RowData[0];
-				item.setName(name.substring(1, name.length() - 1));
-				item.setPrice(Double.parseDouble(RowData[1]));
-				params[0].get(stock).setLastPrice(
-						Double.parseDouble(RowData[1]));
-				list.put(stock, params[0].get(stock));
-				item.setChange(Double.parseDouble(RowData[2]));
-				String pchange = RowData[3];
-				item.setPchange(Double.parseDouble(pchange.substring(1, pchange.length() - 2)));
-			} catch (IOException ex) {
-				// handle exception
-			} finally {
-*/			try {
+			
+			try {
 				is.close();
-			} catch (IOException e) {
-				// handle exception
-			}
-//			}
+			} catch (IOException e) {}
+			
 			return map;
 	    }
+		
+		public Bitmap getBitmapFromURL(String src) {
+		    try {
+		        URL url = new URL(src);
+		        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		        connection.setDoInput(true);
+		        connection.connect();
+		        InputStream input = connection.getInputStream();
+		        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+		        return myBitmap;
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		        return null;
+		    }
+		}
 
 	    @Override
-	    protected void onProgressUpdate(Void... items) {
-	    	
-	    }
+	    protected void onProgressUpdate(Void... items) {}
+	}
+
+	public void updateData(HashMap<String, Object> map) {
+		setTitle(id);
+		nt.setText((CharSequence) map.get("name"));
+		set.setText((CharSequence) map.get("stockexchange"));
+		pt.setText(String.valueOf(map.get("price")));
+		price = (double) map.get("price");
+		ct.setText((CharSequence) map.get("change") + " (" + (CharSequence) map.get("pchange") + ")");
+		if (ct.getText().toString().startsWith("-")) {
+			ct.setTextColor(Color.RED);
+		}
+		else {
+			ct.setTextColor(Color.parseColor("#77aa11"));
+		}
+		ost.setText(String.valueOf(q));
+		vt.setText(String.valueOf((double) q * (double) map.get("price")));
+		ot.setText((CharSequence) map.get("open"));
+		lct.setText((CharSequence) map.get("close"));
+		cpt.setText((CharSequence) map.get("capitalization"));
+		vlt.setText((CharSequence) map.get("volume"));
+		mxdt.setText((CharSequence) map.get("maxd"));
+		mndt.setText((CharSequence) map.get("mind"));
+		mxyt.setText((CharSequence) map.get("maxy"));
+		mnyt.setText((CharSequence) map.get("miny"));
+		chart.setImageBitmap((Bitmap) map.get("chart"));
+		sfloat = (int) map.get("float");
 	}
 
 }

@@ -7,7 +7,6 @@
     <string name="title_activity_add_stock">AddStockActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_stock">Stock Details</string>
-    <string name="change">Change</string>
     <string name="changep">Change (%)</string>
     <string name="price">Price</string>
     <string name="sfloat">Shares Float</string>
@@ -32,8 +31,29 @@
     <string-array name="chartTypes">
         <item>Line</item>
         <item>Bar</item>
-        <item>Candle</item>
+        <item>Candlestick</item>
     </string-array>
-        <string name="ownedshares">Owned shares</string>
-        <string name="value">Value</string>
+    <string name="ownedshares">Owned shares</string>
+    <string name="value">Value</string>
+    <string-array name="chartTypesValues">
+        <item>l</item>
+        <item>b</item>
+        <item>c</item>
+    </string-array>
+    <string-array name="chartTimesValues">
+        <item>1d</item>
+        <item>5d</item>
+        <item>3m</item>
+        <item>6m</item>
+        <item>1y</item>
+        <item>2y</item>
+        <item>5y</item>
+        <item>my</item>
+    </string-array>
+    <string name="dialog_continue">Continue</string>
+    <string name="dialog_message">You\'re about to make a short sale. You will be forced to buy this shares soon. Proceed?</string>
+    <string name="update">Update</string>
+    <string name="title_activity_buy">Buy shares</string>
+    <string name="balance">Avaliable balance</string>
+    <string name="buy">BUY</string>
 </resources>

@@ -8,15 +8,37 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_stock">Dettagli titolo</string>
     <string name="price">Prezzo</string>
-    <string name="change">Cambio</string>
     <string name="changep">Cambio (%)</string>
     <string name="capitalization">Capitalizzazione</string>
     <string name="maxy">Max. anno</string>
     <string name="miny">Min. anno</string>
-    <string name="close">Chiusura</string>
+    <string name="close">Ultima chiusura</string>
     <string name="maxd">Max. giorno</string>
     <string name="open">Apertura</string>
     <string name="mind">Min. giorno</string>
     <string name="sfloat">Flottante</string>
     <string name="volume">Volume</string>
+    <string name="ownedshares">Azioni possedute</string>
+    <string name="value">Valore</string>
+    <string-array name="chartTimes">
+        <item>1 giorno</item>
+        <item>5 giorni</item>
+        <item>3 Mesi</item>
+        <item>6 Mesi</item>
+        <item>1 Anno</item>
+        <item>2 Anni</item>
+        <item>5 Anni</item>
+        <item>Massimo</item>
+    </string-array>
+    <string-array name="chartTypes">
+        <item>Lineare</item>
+        <item>Barre</item>
+        <item>Candlestick</item>
+    </string-array>
+    <string name="dialog_continue">Continua</string>
+    <string name="dialog_message">Stai per effettuare una vendita allo scoperto. Sarai costretto a riacquistare a breve questo titolo. Proseguire?</string>
+    <string name="update">Aggiorna</string>
+    <string name="buy">ACQUISTA</string>
+    <string name="balance">Saldo disponibile</string>
+    <string name="title_activity_buy">Acquista titoli</string>
 </resources>
