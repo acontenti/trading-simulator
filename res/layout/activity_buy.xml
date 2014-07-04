@@ -21,6 +21,7 @@
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="0dp"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/balance" />
@@ -30,7 +31,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/sfloat" />
+                android:gravity="center"
+                android:text="@string/price" />
+
         </TableRow>
 
         <TableRow
@@ -46,16 +49,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="59,763.48$"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
-                android:id="@+id/sfloat"
+                android:id="@+id/price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="560545000"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:gravity="center"
+                android:text="554.63$"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
         </TableRow>
         
     </TableLayout>
@@ -65,34 +70,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/tableLayout1"
         android:layout_margin="8dp"
-        android:layout_toLeftOf="@+id/textView3"
         android:ems="10"
-        android:inputType="number" >
+        android:gravity="center"
+        android:inputType="number"
+        android:maxLength="16"
+        android:singleLine="true" >
 
         <requestFocus />
         
     </EditText>
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/editText"
-        android:layout_alignBottom="@+id/editText"
-        android:layout_alignParentRight="true"
-        android:layout_margin="4dp"
-        android:text="X 546.34$"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
         android:id="@+id/bill"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView3"
+        android:layout_below="@+id/editText"
         android:layout_margin="8dp"
+        android:gravity="center"
         android:text="25,503.49$"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -103,6 +101,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/bill"
         android:layout_margin="8dp"
+        android:gravity="center"
         android:text="Error: your balance is not sufficent"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/holo_red_dark" />

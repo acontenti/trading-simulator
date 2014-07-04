@@ -44,7 +44,7 @@ public class StockActivity extends Activity {
 
 	private Stock stock;
 	private String id;
-	private int q = 0;
+	private long q = 0;
 	private ProgressBar pb;
 	private LinearLayout sv;
 	HashMap<String, Object> data = new HashMap<String, Object>();
@@ -72,7 +72,6 @@ public class StockActivity extends Activity {
 	private CircleButton delete;
 	public boolean firstrun = true;
 	private double price = 0;
-	private int sfloat = 0;
 	private double balance = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +166,6 @@ public class StockActivity extends Activity {
 	protected void showBuyPrompt(View v) {
 		Intent bi = new Intent(this, BuyActivity.class);
 		bi.putExtra("price", price);
-		bi.putExtra("float", sfloat);
 		bi.putExtra("balance", balance);
 		int[] screenLocation = new int[2];
         v.getLocationOnScreen(screenLocation);
@@ -178,6 +176,15 @@ public class StockActivity extends Activity {
 	protected void showSellPrompt() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 0xB && resultCode == Activity.RESULT_OK) {
+			q = data.getLongExtra("q", 0);
+			new LoadDetailsTask().execute((Void) null);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -293,11 +300,7 @@ public class StockActivity extends Activity {
 				map.put("stockexchange", b[10]);
 				map.put("maxy", b[11]);
 				map.put("miny", b[12]);
-				String temp = b[13];
-				temp = temp.replaceAll("\\s+","");
-				int mFloat = Integer.parseInt(temp) * 1000000 + Integer.parseInt(b[14]) * 1000 + Integer.parseInt(b[15]);
-				map.put("float", mFloat);
-				String url = "http://chart.finance.yahoo.com/z?s=" + id + "&t=" + time.get(times.getSelectedItem()) + "&q=" + type.get(types.getSelectedItem()) + "&l=on&z=l";
+				String url = "http://chart.finance.yahoo.com/z?s=" + Uri.encode(id) + "&t=" + time.get(times.getSelectedItem()) + "&q=" + type.get(types.getSelectedItem()) + "&l=off&z=l";
 				map.put("chart", getBitmapFromURL(url));
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -353,7 +356,6 @@ public class StockActivity extends Activity {
 		mxyt.setText((CharSequence) map.get("maxy"));
 		mnyt.setText((CharSequence) map.get("miny"));
 		chart.setImageBitmap((Bitmap) map.get("chart"));
-		sfloat = (int) map.get("float");
 	}
 
 }

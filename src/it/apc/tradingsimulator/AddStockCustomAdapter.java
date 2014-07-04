@@ -32,8 +32,8 @@ public class AddStockCustomAdapter extends ArrayAdapter<Stock> {
 	        TextView tt1 = (TextView) v.findViewById(R.id.name);
 	        TextView tt2 = (TextView) v.findViewById(R.id.price);
 	        
-	        tt0.setText(p.getId().substring(0, p.getQuantity()));
-	        tt1.setText(p.getId().substring(p.getQuantity()));
+	        tt0.setText(p.getId().substring(0, (int) p.getQuantity()));
+	        tt1.setText(p.getId().substring((int) p.getQuantity()));
 	        tt2.setText(String.valueOf(p.getLastPrice()));
 	    }
 	

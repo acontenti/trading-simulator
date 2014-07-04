@@ -56,4 +56,8 @@
     <string name="title_activity_buy">Buy shares</string>
     <string name="balance">Avaliable balance</string>
     <string name="buy">BUY</string>
+    <string name="noconnection_title">No Internet connection</string>
+    <string name="noconnection_message">Unable to load stocks data</string>
+    <string name="retry">Retry</string>
+    <string name="quit">Quit</string>
 </resources>

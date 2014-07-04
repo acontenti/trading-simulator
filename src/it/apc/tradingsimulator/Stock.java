@@ -7,9 +7,9 @@ public class Stock implements Serializable{
 	private static final long serialVersionUID = -8185969689672424334L;
 	private String id;
 	private double lastPrice = 0;
-	private int quantity = 0;
+	private long quantity = 0;
 	
-	public Stock(String id, double lastPrice, int quantity) {
+	public Stock(String id, double lastPrice, long quantity) {
 		super();
 		this.id = id;
 		this.lastPrice = lastPrice;
@@ -32,11 +32,11 @@ public class Stock implements Serializable{
 		this.lastPrice = lastPrice;
 	}
 
-	public int getQuantity() {
+	public long getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(long quantity) {
 		this.quantity = quantity;
 	}
 }

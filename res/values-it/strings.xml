@@ -41,4 +41,8 @@
     <string name="buy">ACQUISTA</string>
     <string name="balance">Saldo disponibile</string>
     <string name="title_activity_buy">Acquista titoli</string>
+    <string name="noconnection_title">Nessuna connessione Internet</string>
+    <string name="noconnection_message">Impossibile ricevere i dati relativi alle azioni</string>
+    <string name="retry">Riprova</string>
+    <string name="quit">Esci</string>
 </resources>

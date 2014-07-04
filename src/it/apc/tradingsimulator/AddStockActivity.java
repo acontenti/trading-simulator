@@ -52,7 +52,7 @@ public class AddStockActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent out = new Intent();
 				Stock s = list.get(position);
-				s.setId(s.getId().substring(0, s.getQuantity()));
+				s.setId(s.getId().substring(0, (int) s.getQuantity()));
 				s.setQuantity(0);
 				out.putExtra("STOCK", s);
 				setResult(Activity.RESULT_OK, out);

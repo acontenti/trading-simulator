@@ -30,6 +30,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -72,11 +79,37 @@ public class Fragment1 extends Fragment {
 			
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				if(prevlvy < firstVisibleItem){
-					addbt.setVisibility(View.GONE);
+				if(prevlvy < firstVisibleItem && addbt.getVisibility() == View.VISIBLE){
+					AnimationSet animation = new AnimationSet(true);
+					animation.setDuration(150);
+					animation.addAnimation(new AlphaAnimation(1, 0));
+					animation.addAnimation(new TranslateAnimation(0, 0, 0, 100));
+					animation.setInterpolator(new AccelerateDecelerateInterpolator());
+					animation.setAnimationListener(new AnimationListener() {
+						@Override public void onAnimationStart(Animation animation) {}
+						@Override public void onAnimationRepeat(Animation animation) {}
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							addbt.setVisibility(View.GONE);
+						}
+					});
+					addbt.startAnimation(animation);
 				}
-				if(prevlvy > firstVisibleItem){
-					addbt.setVisibility(View.VISIBLE);
+				if(prevlvy > firstVisibleItem && addbt.getVisibility() == View.GONE){
+					AnimationSet animation = new AnimationSet(true);
+					animation.setDuration(150);
+					animation.addAnimation(new AlphaAnimation(0, 1));
+					animation.addAnimation(new TranslateAnimation(0, 0, 100, 0));
+					animation.setInterpolator(new AccelerateDecelerateInterpolator());
+					animation.setAnimationListener(new AnimationListener() {
+						@Override public void onAnimationStart(Animation animation) {}
+						@Override public void onAnimationRepeat(Animation animation) {}
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							addbt.setVisibility(View.VISIBLE);
+						}
+					});
+					addbt.startAnimation(animation);
 				}
 				prevlvy = firstVisibleItem;
 			}
@@ -180,9 +213,7 @@ public class Fragment1 extends Fragment {
 				Set<String> ids = params[0].keySet();
 				for (String stock : ids) {
 
-					StockRow item = new StockRow(stock, "", params[0]
-							.get(stock).getLastPrice(), 0, 0, params[0].get(
-							stock).getQuantity());
+					StockRow item = new StockRow(stock, "", params[0].get(stock).getLastPrice(), 0, 0, params[0].get(stock).getQuantity());
 
 					HttpGet httpGet = new HttpGet(
 							"http://download.finance.yahoo.com/d/quotes.csv?s="
@@ -204,31 +235,26 @@ public class Fragment1 extends Fragment {
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(is));
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+					CSVReader csv = new CSVReader(reader);
 					try {
-						String line = reader.readLine();
-						String[] RowData = line.split(",");
-						String name = RowData[0];
-						item.setName(name.substring(1, name.length() - 1));
-						item.setPrice(Double.parseDouble(RowData[1]));
-						params[0].get(stock).setLastPrice(
-								Double.parseDouble(RowData[1]));
+						String[] data = csv.readNext();
+						item.setName(data[0]);
+						item.setPrice(Double.parseDouble(data[1]));
+						params[0].get(stock).setLastPrice(Double.parseDouble(data[1]));
 						list.put(stock, params[0].get(stock));
-						item.setChange(Double.parseDouble(RowData[2]));
-						String pchange = RowData[3];
-						item.setPchange(Double.parseDouble(pchange.substring(1,
-								pchange.length() - 2)));
+						item.setChange(Double.parseDouble(data[2]));
+						String pchange = data[3];
+						item.setPchange(Double.parseDouble(pchange.substring(0, pchange.length() - 1)));
 					} catch (IOException ex) {
-						// handle exception
+						ex.printStackTrace();
 					} finally {
 						try {
 							is.close();
 						} catch (IOException e) {
-							// handle exception
+							e.printStackTrace();
 						}
 					}
-
 					publishProgress(item);
 				}
 			}

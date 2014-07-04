@@ -7,9 +7,9 @@ public class StockRow {
 	private double price = 0;
 	private double change = 0;
 	private double pchange = 0;
-	private int quantity = 0;
+	private long quantity = 0;
 	
-	public StockRow (String id, String name, double price, double change, double pchange, int quantity) {
+	public StockRow (String id, String name, double price, double change, double pchange, long quantity) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -59,11 +59,11 @@ public class StockRow {
 		this.pchange = pchange;
 	}
 
-	public int getQuantity() {
+	public long getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(long quantity) {
 		this.quantity = quantity;
 	}
 }
