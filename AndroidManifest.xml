@@ -10,7 +10,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -42,6 +42,12 @@
         <activity
             android:name="it.apc.tradingsimulator.BuyActivity"
             android:label="@string/title_activity_buy"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialDialog" >
+        </activity>
+        <activity
+            android:name="it.apc.tradingsimulator.SellActivity"
+            android:label="@string/title_activity_sell"
             android:screenOrientation="portrait"
             android:theme="@style/MaterialDialog" >
         </activity>

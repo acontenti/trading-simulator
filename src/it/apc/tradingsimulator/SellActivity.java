@@ -13,46 +13,48 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class BuyActivity extends Activity {
+public class SellActivity extends Activity {
 
-	private TextView bt;
+	private TextView qt;
 	private TextView tt;
 	private TextView et;
 	private Button bb;
 	private EditText qe;
 	private double price;
-	private double balance;
 	private NumberFormat nf;
 	private double bill = 0;
 	private TextView pt;
 	protected long q;
+	protected long pq;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_buy);
-		bt = (TextView) findViewById(R.id.balance);
+		setContentView(R.layout.activity_sell);
+		qt = (TextView) findViewById(R.id.balance);
 		tt = (TextView) findViewById(R.id.bill);
 		et = (TextView) findViewById(R.id.errorbox);
 		pt = (TextView) findViewById(R.id.price);
 		bb = (Button) findViewById(R.id.buy);
 		qe = (EditText) findViewById(R.id.editText);
 		price = getIntent().getDoubleExtra("price", 0);
-		balance = getIntent().getDoubleExtra("balance", 0);
+		q = getIntent().getLongExtra("q", 0);
 		nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(2);
 		nf.setMinimumFractionDigits(2);
 		nf.setGroupingUsed(true);
-		bt.setText(nf.format(balance) + "$");
+		qt.setText(String.valueOf(q));
 		tt.setText(nf.format(bill) + "$");
 		pt.setText(nf.format(price) + "$");
-		et.setVisibility(View.GONE);
+		if (q > 0) {
+			et.setVisibility(View.GONE);
+		}
 		bb.setEnabled(false);
 		bb.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
-				i.putExtra("q", q);
+				i.putExtra("q", -pq);
 				setResult(Activity.RESULT_OK, i);
 				finish();
 			}
@@ -61,26 +63,20 @@ public class BuyActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				if (s.length() > 0) {
-					q = Long.parseLong(s.toString());
+					pq = Long.parseLong(s.toString());
 					bb.setEnabled(true);
 				}
 				else {
-					q = 0;
+					pq = 0;
+					bb.setEnabled(false);
 				}
-				bill = q * price;
+				bill = pq * price;
 				tt.setText(nf.format(bill) + "$");
-				if (bill > balance) {
+				if (pq > q || q <= 0) {
 					et.setVisibility(View.VISIBLE);
 				}
 				else {
 					et.setVisibility(View.GONE);
-					bb.setEnabled(true);
-				}
-				if (q == 0) {
-					bb.setEnabled(false);
-				}
-				else {
-					bb.setEnabled(false);
 				}
 			}
 			@Override

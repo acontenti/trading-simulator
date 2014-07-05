@@ -9,7 +9,6 @@
     <string name="title_activity_stock">Stock Details</string>
     <string name="changep">Change (%)</string>
     <string name="price">Price</string>
-    <string name="sfloat">Shares Float</string>
     <string name="volume">Volume</string>
     <string name="capitalization">Capitalization</string>
     <string name="maxd">Max. day</string>
@@ -60,4 +59,11 @@
     <string name="noconnection_message">Unable to load stocks data</string>
     <string name="retry">Retry</string>
     <string name="quit">Quit</string>
+    <string name="title_activity_sell">Sell shares</string>
+    <string name="error_balance">Error: your balance is not sufficent</string>
+    <string name="warning_shortsell">Warning: you are going to make a short sale</string>
+    <string name="sell">SELL</string>
+    <string name="dialog_cantdelete">Cannot delete</string>
+    <string name="coveryourpos">Cover your short sale on %s shares</string>
+    <string name="sellyourshares">Sell all %s shares you own</string>
 </resources>

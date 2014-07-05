@@ -16,7 +16,6 @@
     <string name="maxd">Max. giorno</string>
     <string name="open">Apertura</string>
     <string name="mind">Min. giorno</string>
-    <string name="sfloat">Flottante</string>
     <string name="volume">Volume</string>
     <string name="ownedshares">Azioni possedute</string>
     <string name="value">Valore</string>
@@ -39,10 +38,17 @@
     <string name="dialog_message">Stai per effettuare una vendita allo scoperto. Sarai costretto a riacquistare a breve questo titolo. Proseguire?</string>
     <string name="update">Aggiorna</string>
     <string name="buy">ACQUISTA</string>
-    <string name="balance">Saldo disponibile</string>
+    <string name="balance">Liquidità</string>
     <string name="title_activity_buy">Acquista titoli</string>
     <string name="noconnection_title">Nessuna connessione Internet</string>
     <string name="noconnection_message">Impossibile ricevere i dati relativi alle azioni</string>
     <string name="retry">Riprova</string>
     <string name="quit">Esci</string>
+    <string name="sell">VENDI</string>
+    <string name="title_activity_sell">Vendi azioni</string>
+    <string name="error_balance">Errore: la tua liquidità non è sufficiente</string>
+    <string name="warning_shortsell">Attenzione: stai per effettuare una vendita allo scoperto</string>
+    <string name="dialog_cantdelete">Impossibile cancellare</string>
+    <string name="coveryourpos">Ricopri la tua vendita allo scoperto di azioni %s</string>
+    <string name="sellyourshares">Vendi le azioni di %s che possiedi</string>
 </resources>

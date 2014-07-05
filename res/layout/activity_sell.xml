@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BuyActivity" >
+    tools:context=".SellActivity" >
 
     <TableLayout
         android:id="@+id/tableLayout1"
@@ -21,10 +21,10 @@
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="0dp"
-                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/balance" />
+                android:gravity="center"
+                android:text="@string/ownedshares" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="59,763.48$"
+                android:text="150"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -102,9 +102,9 @@
         android:layout_below="@+id/bill"
         android:layout_margin="8dp"
         android:gravity="center"
-        android:text="@string/error_balance"
+        android:text="@string/warning_shortsell"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/holo_red_dark" />
+        android:textColor="@android:color/holo_orange_dark" />
 
     <View
         android:id="@+id/view1"
@@ -121,6 +121,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/view1"
-        android:text="@string/buy" />
+        android:text="@string/sell" />
 
 </RelativeLayout>

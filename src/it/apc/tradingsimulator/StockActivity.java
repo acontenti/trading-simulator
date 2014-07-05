@@ -16,7 +16,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-import android.R.color;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -73,6 +72,7 @@ public class StockActivity extends Activity {
 	public boolean firstrun = true;
 	private double price = 0;
 	private double balance = 0;
+	protected boolean todelete = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -132,16 +132,16 @@ public class StockActivity extends Activity {
 		sell = (CircleButton) findViewById(R.id.circleButton_sell);
 		sell.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick(final View v) {
 				if (q > 0) {
-					showSellPrompt();
+					showSellPrompt(v);
 				}
 				else {
 					AlertDialog.Builder builder = new AlertDialog.Builder(StockActivity.this);
 					builder.setMessage(R.string.dialog_message).setTitle(android.R.string.dialog_alert_title);
 					builder.setPositiveButton(R.string.dialog_continue, new DialogInterface.OnClickListener() {
 				           public void onClick(DialogInterface dialog, int id) {
-				               showSellPrompt();
+				               showSellPrompt(v);
 				           }
 				       });
 					builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -157,7 +157,20 @@ public class StockActivity extends Activity {
 		delete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+				if (q == 0) {
+					todelete = true;
+				}
+				else {
+					AlertDialog.Builder builder = new AlertDialog.Builder(StockActivity.this);
+					builder.setTitle(R.string.dialog_cantdelete);
+					builder.setMessage(String.format(getString(q > 0 ? R.string.sellyourshares : R.string.coveryourpos), id));
+					builder.setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				               // User cancelled the dialog
+				           }
+				       });
+					builder.show();
+				}
 			}
 		});
 		new LoadDetailsTask().execute((Void) null);
@@ -173,15 +186,20 @@ public class StockActivity extends Activity {
 		startActivityForResult(bi, 0xB, scaleBundle);
 	}
 
-	protected void showSellPrompt() {
-		// TODO Auto-generated method stub
-		
+	protected void showSellPrompt(View v) {
+		Intent bi = new Intent(this, SellActivity.class);
+		bi.putExtra("price", price);
+		bi.putExtra("q", q);
+		int[] screenLocation = new int[2];
+        v.getLocationOnScreen(screenLocation);
+        Bundle scaleBundle = ActivityOptions.makeScaleUpAnimation(v, screenLocation[0], screenLocation[1], v.getWidth(), v.getHeight()).toBundle();
+		startActivityForResult(bi, 0xB, scaleBundle);
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0xB && resultCode == Activity.RESULT_OK) {
-			q = data.getLongExtra("q", 0);
+			q += data.getLongExtra("q", 0);
 			new LoadDetailsTask().execute((Void) null);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -212,6 +230,7 @@ public class StockActivity extends Activity {
 	protected void onDestroy() {
 		Intent data = new Intent();
 		data.putExtra("STOCK", stock);
+		data.putExtra("delete", todelete);
 		setResult(Activity.RESULT_OK, data);
 		finish();
 		super.onDestroy();
@@ -220,7 +239,7 @@ public class StockActivity extends Activity {
 	@Override
 	public void finish() {
 		super.finish();
-		overridePendingTransition(0, 0);
+		overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 	}
 	
 	private class LoadDetailsTask extends AsyncTask<Void, Void, HashMap<String, Object>> {
@@ -238,6 +257,7 @@ public class StockActivity extends Activity {
 			sell.setAlpha(1f);
 			delete.setEnabled(true);
 			delete.setAlpha(1f);
+			stock.setLastPrice(price);
 	    }
 
 	    @Override
@@ -254,6 +274,7 @@ public class StockActivity extends Activity {
 			buy.setEnabled(false);
 			sell.setEnabled(false);
 			delete.setEnabled(false);
+			stock.setQuantity(q);
 	    }
 
 		@Override
@@ -336,9 +357,9 @@ public class StockActivity extends Activity {
 		setTitle(id);
 		nt.setText((CharSequence) map.get("name"));
 		set.setText((CharSequence) map.get("stockexchange"));
-		pt.setText(String.valueOf(map.get("price")));
+		pt.setText(String.valueOf(map.get("price")) + "$");
 		price = (double) map.get("price");
-		ct.setText((CharSequence) map.get("change") + " (" + (CharSequence) map.get("pchange") + ")");
+		ct.setText((CharSequence) map.get("change") + "$ (" + (CharSequence) map.get("pchange") + ")");
 		if (ct.getText().toString().startsWith("-")) {
 			ct.setTextColor(Color.RED);
 		}
@@ -346,15 +367,15 @@ public class StockActivity extends Activity {
 			ct.setTextColor(Color.parseColor("#77aa11"));
 		}
 		ost.setText(String.valueOf(q));
-		vt.setText(String.valueOf((double) q * (double) map.get("price")));
-		ot.setText((CharSequence) map.get("open"));
-		lct.setText((CharSequence) map.get("close"));
-		cpt.setText((CharSequence) map.get("capitalization"));
+		vt.setText(String.valueOf((double) q * (double) map.get("price")) + "$");
+		ot.setText((CharSequence) map.get("open") + "$");
+		lct.setText((CharSequence) map.get("close") + "$");
+		cpt.setText((CharSequence) map.get("capitalization") + "$");
 		vlt.setText((CharSequence) map.get("volume"));
-		mxdt.setText((CharSequence) map.get("maxd"));
-		mndt.setText((CharSequence) map.get("mind"));
-		mxyt.setText((CharSequence) map.get("maxy"));
-		mnyt.setText((CharSequence) map.get("miny"));
+		mxdt.setText((CharSequence) map.get("maxd") + "$");
+		mndt.setText((CharSequence) map.get("mind") + "$");
+		mxyt.setText((CharSequence) map.get("maxy") + "$");
+		mnyt.setText((CharSequence) map.get("miny") + "$");
 		chart.setImageBitmap((Bitmap) map.get("chart"));
 	}
 

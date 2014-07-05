@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -35,7 +37,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -73,13 +74,14 @@ public class Fragment1 extends Fragment {
 		lv = (ListView) rootView.findViewById(R.id.listView);
 		lv.setOnScrollListener(new OnScrollListener() {
 			private int prevlvy = 0;
+			private boolean animfinished = true;
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {}
 			
 			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				if(prevlvy < firstVisibleItem && addbt.getVisibility() == View.VISIBLE){
+			public void onScroll(AbsListView v, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				if(prevlvy < firstVisibleItem && animfinished && addbt.getVisibility() == View.VISIBLE){
 					AnimationSet animation = new AnimationSet(true);
 					animation.setDuration(150);
 					animation.addAnimation(new AlphaAnimation(1, 0));
@@ -91,11 +93,13 @@ public class Fragment1 extends Fragment {
 						@Override
 						public void onAnimationEnd(Animation animation) {
 							addbt.setVisibility(View.GONE);
+							animfinished = true;
 						}
 					});
+					animfinished = false;
 					addbt.startAnimation(animation);
 				}
-				if(prevlvy > firstVisibleItem && addbt.getVisibility() == View.GONE){
+				if(prevlvy > firstVisibleItem && animfinished && addbt.getVisibility() == View.GONE){
 					AnimationSet animation = new AnimationSet(true);
 					animation.setDuration(150);
 					animation.addAnimation(new AlphaAnimation(0, 1));
@@ -107,13 +111,16 @@ public class Fragment1 extends Fragment {
 						@Override
 						public void onAnimationEnd(Animation animation) {
 							addbt.setVisibility(View.VISIBLE);
+							animfinished = true;
 						}
 					});
+					animfinished = false;
 					addbt.startAnimation(animation);
 				}
 				prevlvy = firstVisibleItem;
 			}
 		});
+
 		adapter = new CustomAdapter(getActivity(), R.layout.stocksrow, rowlist);
 		pb = (ProgressBar) rootView.findViewById(R.id.progressBar);
 		pb.setVisibility(View.GONE);
@@ -127,7 +134,7 @@ public class Fragment1 extends Fragment {
 				Intent ed = new Intent(getActivity(), StockActivity.class);
 				ed.putExtra("STOCK", list.get(rowlist.get(arg2).getId()));
 				startActivityForResult(ed, 0xED);
-				getActivity().overridePendingTransition(0, 0);
+				getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 			}
 		});
 		addbt.setOnClickListener(new OnClickListener() {
@@ -192,6 +199,11 @@ public class Fragment1 extends Fragment {
 	    	lv.setEnabled(true);
 	        lv.setAlpha(1f);
 	        pb.setVisibility(View.GONE);
+	        Collections.sort(rowlist, new Comparator<StockRow>() {
+	            public int compare(StockRow result1, StockRow result2) {
+	                return result1.getId().compareTo(result2.getId());
+	            }
+	        });
 		    adapter.notifyDataSetChanged();
 	    }
 
