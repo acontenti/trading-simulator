@@ -139,21 +139,12 @@ public class AddStockActivity extends Activity {
 			}
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 			try {
-				String line = reader.readLine();
-				String[] RowData = line.split(",");
-				if (RowData.length == 2) {
-					String name = RowData[0];
-					item.setId(id + name.substring(1, name.length() - 1));
-					item.setLastPrice(Double.parseDouble(RowData[1]));
-					item.setQuantity(id.length());
-				}
-				if (RowData.length == 3) {
-					String name = RowData[0];
-					String name2 = RowData[1];
-					item.setId(id + name.substring(1) + "," + name2.substring(0, name2.length() - 1));
-					item.setLastPrice(Double.parseDouble(RowData[2]));
-					item.setQuantity(id.length());
-				}
+				CSVReader csv = new CSVReader(reader);
+				String[] data = csv.readNext();
+				String name = data[0];
+				item.setId(id + name);
+				item.setLastPrice(Double.parseDouble(data[1]));
+				item.setQuantity(id.length());
 			} catch (IOException ex) {
 			} finally {
 				try {

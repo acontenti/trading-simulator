@@ -54,6 +54,7 @@ public class Fragment1 extends Fragment {
 	HashMap<String, Stock> list = new HashMap<String, Stock>();
 	private CustomAdapter adapter;
 	private ProgressBar pb;
+	private OnListChangedListener mCallback;
 
 	public Fragment1() {}
 
@@ -192,6 +193,24 @@ public class Fragment1 extends Fragment {
 		
 	}
 	
+	public interface OnListChangedListener {
+        public void OnListChange(ArrayList<StockRow> l);
+        public void OnListLoad();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnListChangedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnHeadlineSelectedListener");
+        }
+    }
+	
 	private class LoadListTask extends AsyncTask<HashMap<String, Stock>, StockRow, Void> {
 
 	    @Override
@@ -204,6 +223,7 @@ public class Fragment1 extends Fragment {
 	                return result1.getId().compareTo(result2.getId());
 	            }
 	        });
+	        mCallback.OnListChange(rowlist);
 		    adapter.notifyDataSetChanged();
 	    }
 
@@ -212,6 +232,7 @@ public class Fragment1 extends Fragment {
 	        lv.setEnabled(false);
 	        lv.setAlpha(0.25f);
 	        pb.setVisibility(View.VISIBLE);
+	        mCallback.OnListLoad();
 	        adapter.clear();
 	    }
 

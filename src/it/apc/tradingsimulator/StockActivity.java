@@ -285,8 +285,7 @@ public class StockActivity extends Activity {
 	    	HttpClient httpClient = new DefaultHttpClient();
 	        HttpContext localContext = new BasicHttpContext();
 
-			HttpGet httpGet = new HttpGet("http://download.finance.yahoo.com/d/quotes.csv?s="
-							+ Uri.encode(id) + "&f=n0l1c1p2v0h0g0j1o0p0x0k0j0f6&e=.csv");
+			HttpGet httpGet = new HttpGet("http://download.finance.yahoo.com/d/quotes.csv?s=" + Uri.encode(id) + "&f=n0l1c1p2v0h0g0j1o0p0x0k0j0f6&e=.csv");
 			HttpResponse response = null;
 			try {
 				response = httpClient.execute(httpGet, localContext);

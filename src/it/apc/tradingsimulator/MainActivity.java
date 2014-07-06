@@ -1,5 +1,8 @@
 package it.apc.tradingsimulator;
 
+import it.apc.tradingsimulator.Fragment1.OnListChangedListener;
+
+import java.util.ArrayList;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -18,7 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements OnListChangedListener{
 
 	public static String STOCK_LIST_TAG = "STOCKLIST";
 	public static String SHARED_PREFS_FILE = "data";
@@ -36,6 +39,7 @@ public class MainActivity extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		
 	}
 
 	private void noConnectionDialog() {
@@ -129,5 +133,15 @@ public class MainActivity extends FragmentActivity {
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public void OnListChange(ArrayList<StockRow> l) {
+		fragment2.listChanged(l);
+	}
+
+	@Override
+	public void OnListLoad() {
+		fragment2.loadingStarted();
 	}
 }
