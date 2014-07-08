@@ -55,6 +55,7 @@ public class Fragment1 extends Fragment {
 	private CustomAdapter adapter;
 	private ProgressBar pb;
 	private OnListChangedListener mCallback;
+	private float balance;
 
 	public Fragment1() {}
 
@@ -64,7 +65,9 @@ public class Fragment1 extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment1, container, false);
 //      load tasks from preference
         SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
-
+        
+        balance = prefs.getFloat("balance", 0);
+        balance = 100000;
         try {
             list = (HashMap<String, Stock>) ObjectSerializer.deserialize(prefs.getString(MainActivity.STOCK_LIST_TAG, ObjectSerializer.serialize(new HashMap<String, Stock>())));
         } catch (IOException e) {
@@ -131,11 +134,15 @@ public class Fragment1 extends Fragment {
 		lv.setAdapter(adapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View v, int arg2, long arg3) {
 				Intent ed = new Intent(getActivity(), StockActivity.class);
 				ed.putExtra("STOCK", list.get(rowlist.get(arg2).getId()));
-				startActivityForResult(ed, 0xED);
-				getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+				ed.putExtra("balance", balance);
+				int[] screenLocation = new int[2];
+	            v.getLocationOnScreen(screenLocation);
+	            Bundle scaleBundle = ActivityOptions.makeScaleUpAnimation(v, screenLocation[0], screenLocation[1], v.getWidth(), v.getHeight()).toBundle();
+				getActivity().startActivityForResult(ed, 1, scaleBundle);
+				getActivity().overridePendingTransition(R.anim.fade_in, 0);
 			}
 		});
 		addbt.setOnClickListener(new OnClickListener() {
@@ -154,20 +161,37 @@ public class Fragment1 extends Fragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0xADD && resultCode == Activity.RESULT_OK) {
-			add((Stock) data.getSerializableExtra("STOCK"));
+			add((Stock) data.getSerializableExtra("STOCK"), false, false);
+		}
+		if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+			balance = data.getFloatExtra("balance", balance);
+			boolean todelete = data.getBooleanExtra("delete", false);
+			add((Stock) data.getSerializableExtra("STOCK"), true, todelete);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void add(Stock s) {
+	private void add(Stock s, boolean isEdit, boolean todelete) {
 		if(!list.containsKey(s.getId())){
+			//ADD NEW
 			list.put(s.getId(), s);
+		}
+		else if (!isEdit){
+			Toast.makeText(getActivity(), "Stock already added!", Toast.LENGTH_SHORT).show();
+		}
+		else if (isEdit) {
+			if (todelete) {
+				//DELETE
+				list.remove(s.getId());
+			}
+			else {
+				//EDIT
+				list.remove(s.getId());
+				list.put(s.getId(), s);
+			}
 			new LoadListTask().execute(list);
 			new SaveTask().execute((Void) null);
-		}
-		else {
-			Toast.makeText(getActivity(), "Stock already added!", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -194,7 +218,7 @@ public class Fragment1 extends Fragment {
 	}
 	
 	public interface OnListChangedListener {
-        public void OnListChange(ArrayList<StockRow> l);
+        public void OnListChange(ArrayList<StockRow> list, float balance);
         public void OnListLoad();
     }
 
@@ -223,8 +247,9 @@ public class Fragment1 extends Fragment {
 	                return result1.getId().compareTo(result2.getId());
 	            }
 	        });
-	        mCallback.OnListChange(rowlist);
+	        mCallback.OnListChange(rowlist, balance);
 		    adapter.notifyDataSetChanged();
+			new SaveTask().execute((Void) null);
 	    }
 
 	    @Override
@@ -303,6 +328,5 @@ public class Fragment1 extends Fragment {
 	@SuppressWarnings("unchecked")
 	public void update(){
 		new LoadListTask().execute(list);
-		new SaveTask().execute((Void) null);
 	}
 }

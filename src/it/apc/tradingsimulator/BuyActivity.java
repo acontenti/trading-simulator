@@ -69,18 +69,13 @@ public class BuyActivity extends Activity {
 				}
 				bill = q * price;
 				tt.setText(nf.format(bill) + "$");
-				if (bill > balance) {
+				if (bill > balance || q <= 0) {
 					et.setVisibility(View.VISIBLE);
+					bb.setEnabled(false);
 				}
 				else {
 					et.setVisibility(View.GONE);
 					bb.setEnabled(true);
-				}
-				if (q == 0) {
-					bb.setEnabled(false);
-				}
-				else {
-					bb.setEnabled(false);
 				}
 			}
 			@Override

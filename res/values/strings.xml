@@ -66,4 +66,8 @@
     <string name="dialog_cantdelete">Cannot delete</string>
     <string name="coveryourpos">Cover your short sale on %s shares</string>
     <string name="sellyourshares">Sell all %s shares you own</string>
+    <string name="initialbalance">Initial balance</string>
+    <string name="sha"></string>
+    <string name="totalvalue">Total value</string>
+    <string name="sharesvalue">Shares value</string>
 </resources>

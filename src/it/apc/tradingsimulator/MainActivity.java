@@ -68,7 +68,7 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	    switch (item.getItemId()) {
 	    // Respond to the action bar's Up/Home button
 	    case android.R.id.home:
-	        finish();
+	        //finish();
 	        return true;
 	    case R.id.action_update:
 	    	fragment1.update();
@@ -136,8 +136,8 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	}
 
 	@Override
-	public void OnListChange(ArrayList<StockRow> l) {
-		fragment2.listChanged(l);
+	public void OnListChange(ArrayList<StockRow> l, float b) {
+		fragment2.listChanged(l, b);
 	}
 
 	@Override

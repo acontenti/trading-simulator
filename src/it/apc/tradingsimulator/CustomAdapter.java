@@ -57,7 +57,7 @@ public class CustomAdapter extends ArrayAdapter<StockRow> {
 	        	tt4.setText("+" + tt4.getText());
 				tt4.setTextColor(Color.parseColor("#77aa11"));
 			}
-	        if (p.getQuantity() <= 0) {
+	        if (p.getQuantity() == 0) {
 	        	im.setVisibility(View.INVISIBLE);
 	        }
 	        else {

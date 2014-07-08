@@ -73,6 +73,7 @@ public class StockActivity extends Activity {
 	private double price = 0;
 	private double balance = 0;
 	protected boolean todelete = false;
+	private MenuItem balancem;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,6 +81,7 @@ public class StockActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_action_go));
 		stock = (Stock) getIntent().getSerializableExtra("STOCK");
+		balance = getIntent().getFloatExtra("balance", 0);
 		id = stock.getId();
 		q  = stock.getQuantity();
 		nt = (TextView) findViewById(R.id.name);
@@ -159,6 +161,7 @@ public class StockActivity extends Activity {
 			public void onClick(View v) {
 				if (q == 0) {
 					todelete = true;
+					finish();
 				}
 				else {
 					AlertDialog.Builder builder = new AlertDialog.Builder(StockActivity.this);
@@ -200,6 +203,8 @@ public class StockActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0xB && resultCode == Activity.RESULT_OK) {
 			q += data.getLongExtra("q", 0);
+			balance -= data.getLongExtra("q", 0) * price;
+			balancem.setTitle(balance + " $");
 			new LoadDetailsTask().execute((Void) null);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -209,6 +214,8 @@ public class StockActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		balancem = menu.findItem(R.id.balance);
+		balancem.setTitle(balance + " $");
 		return true;
 	}
 	
@@ -227,20 +234,20 @@ public class StockActivity extends Activity {
 	}
 	
 	@Override
-	protected void onDestroy() {
+	public void finish() {
 		Intent data = new Intent();
 		data.putExtra("STOCK", stock);
 		data.putExtra("delete", todelete);
+		data.putExtra("balance", balance);
 		setResult(Activity.RESULT_OK, data);
-		finish();
-		super.onDestroy();
-	}
-	
-	@Override
-	public void finish() {
 		super.finish();
 		overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 	}
+	
+	@Override
+    public void onBackPressed() {
+		finish();
+    }
 	
 	private class LoadDetailsTask extends AsyncTask<Void, Void, HashMap<String, Object>> {
 
