@@ -14,6 +14,7 @@
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="android:windowBackground">@color/bkg</item>
 		<item name="android:typeface">monospace</item>
+		<item name="android:actionMenuTextColor">@android:color/white</item>
 	</style>
 
 	<style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
@@ -22,6 +23,7 @@
 	
     <style name="MaterialActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">#59f</item>
+        <item name="android:actionMenuTextAppearance">@style/MenuTextStyle</item> 
     </style>
 
     <style name="MaterialDialog" parent="@android:style/Theme.Holo.Light.Dialog">
@@ -33,5 +35,10 @@
     <style name="MaterialDialog.NoActionBar" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar">
         <item name="android:typeface">monospace</item>
     </style>
+    
+    <style name="MenuTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+	    <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+	</style>
     
 </resources>

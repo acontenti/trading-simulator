@@ -67,7 +67,7 @@ public class Fragment1 extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
         
         balance = prefs.getFloat("balance", 0);
-        balance = 100000;
+        
         try {
             list = (HashMap<String, Stock>) ObjectSerializer.deserialize(prefs.getString(MainActivity.STOCK_LIST_TAG, ObjectSerializer.serialize(new HashMap<String, Stock>())));
         } catch (IOException e) {
@@ -204,6 +204,7 @@ public class Fragment1 extends Fragment {
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
+	    editor.putFloat("balance", balance);
 	    editor.commit();
 	}
 	

@@ -2,6 +2,7 @@ package it.apc.tradingsimulator;
 
 import it.apc.tradingsimulator.Fragment1.OnListChangedListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -29,6 +30,8 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	ViewPager mViewPager;
 	public Fragment1 fragment1 = new Fragment1();
 	public Fragment2 fragment2 = new Fragment2();
+	private MenuItem balancem;
+	private NumberFormat nf;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,9 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		
+		nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(2);
+		nf.setGroupingUsed(true);
 	}
 
 	private void noConnectionDialog() {
@@ -60,6 +65,7 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		balancem = menu.findItem(R.id.balance);
 		return true;
 	}
 	
@@ -138,6 +144,7 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	@Override
 	public void OnListChange(ArrayList<StockRow> l, float b) {
 		fragment2.listChanged(l, b);
+		balancem.setTitle(nf.format(b) + " $");
 	}
 
 	@Override

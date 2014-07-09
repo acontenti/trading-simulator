@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.HashMap;
 
 import org.apache.http.HttpResponse;
@@ -71,9 +72,10 @@ public class StockActivity extends Activity {
 	private CircleButton delete;
 	public boolean firstrun = true;
 	private double price = 0;
-	private double balance = 0;
+	private float balance = 0;
 	protected boolean todelete = false;
 	private MenuItem balancem;
+	NumberFormat nf;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,6 +104,9 @@ public class StockActivity extends Activity {
 		pb = (ProgressBar) findViewById(R.id.progressBar);
 		pb.setVisibility(View.GONE);
 		sv = (LinearLayout) findViewById(R.id.box);
+		nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(4);
+		nf.setGroupingUsed(true);
 		OnItemSelectedListener listener = new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -204,7 +209,9 @@ public class StockActivity extends Activity {
 		if (requestCode == 0xB && resultCode == Activity.RESULT_OK) {
 			q += data.getLongExtra("q", 0);
 			balance -= data.getLongExtra("q", 0) * price;
-			balancem.setTitle(balance + " $");
+			nf.setMaximumFractionDigits(2);
+			balancem.setTitle(nf.format(balance) + " $");
+			nf.setMaximumFractionDigits(4);
 			new LoadDetailsTask().execute((Void) null);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -215,7 +222,9 @@ public class StockActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		balancem = menu.findItem(R.id.balance);
-		balancem.setTitle(balance + " $");
+		nf.setMaximumFractionDigits(2);
+		balancem.setTitle(nf.format(balance) + " $");
+		nf.setMaximumFractionDigits(4);
 		return true;
 	}
 	
@@ -363,9 +372,9 @@ public class StockActivity extends Activity {
 		setTitle(id);
 		nt.setText((CharSequence) map.get("name"));
 		set.setText((CharSequence) map.get("stockexchange"));
-		pt.setText(String.valueOf(map.get("price")) + "$");
+		pt.setText(nf.format(map.get("price")) + " $");
 		price = (double) map.get("price");
-		ct.setText((CharSequence) map.get("change") + "$ (" + (CharSequence) map.get("pchange") + ")");
+		ct.setText((CharSequence) map.get("change") + " $ (" + (CharSequence) map.get("pchange") + ")");
 		if (ct.getText().toString().startsWith("-")) {
 			ct.setTextColor(Color.RED);
 		}
@@ -373,15 +382,15 @@ public class StockActivity extends Activity {
 			ct.setTextColor(Color.parseColor("#77aa11"));
 		}
 		ost.setText(String.valueOf(q));
-		vt.setText(String.valueOf((double) q * (double) map.get("price")) + "$");
-		ot.setText((CharSequence) map.get("open") + "$");
-		lct.setText((CharSequence) map.get("close") + "$");
-		cpt.setText((CharSequence) map.get("capitalization") + "$");
+		vt.setText(nf.format((double) q * (double) map.get("price")) + " $");
+		ot.setText(map.get("open") + "  $");
+		lct.setText(map.get("close") + " $");
+		cpt.setText((CharSequence) map.get("capitalization") + " $");
 		vlt.setText((CharSequence) map.get("volume"));
-		mxdt.setText((CharSequence) map.get("maxd") + "$");
-		mndt.setText((CharSequence) map.get("mind") + "$");
-		mxyt.setText((CharSequence) map.get("maxy") + "$");
-		mnyt.setText((CharSequence) map.get("miny") + "$");
+		mxdt.setText(map.get("maxd") + " $");
+		mndt.setText(map.get("mind") + " $");
+		mxyt.setText(map.get("maxy") + " $");
+		mnyt.setText(map.get("miny") + " $");
 		chart.setImageBitmap((Bitmap) map.get("chart"));
 	}
 
