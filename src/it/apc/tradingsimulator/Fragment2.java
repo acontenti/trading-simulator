@@ -111,7 +111,7 @@ public class Fragment2 extends Fragment {
 			switch (position) {
 			case 0:
 				lg = new LineGraph(getActivity());
-				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 32));
+				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 200));
 				
 				Line l = new Line();
 				LinePoint p = new LinePoint();
