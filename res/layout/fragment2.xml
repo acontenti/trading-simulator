@@ -16,7 +16,9 @@
 	    <it.apc.tradingsimulator.VerticalViewPager
 	        android:id="@+id/verticalViewPager1"
 	        android:layout_width="match_parent"
-	        android:layout_height="200dp"/>
+	        android:layout_height="200dp"
+	        android:padding="8dp"
+	        android:background="@drawable/line" />
 	        
 	    <ScrollView
 	        android:id="@+id/scrollView1"

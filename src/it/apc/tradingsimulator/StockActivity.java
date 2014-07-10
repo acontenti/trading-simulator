@@ -72,7 +72,7 @@ public class StockActivity extends Activity {
 	private CircleButton delete;
 	public boolean firstrun = true;
 	private double price = 0;
-	private float balance = 0;
+	private double balance = 0;
 	protected boolean todelete = false;
 	private MenuItem balancem;
 	NumberFormat nf;
@@ -83,7 +83,7 @@ public class StockActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_action_go));
 		stock = (Stock) getIntent().getSerializableExtra("STOCK");
-		balance = getIntent().getFloatExtra("balance", 0);
+		balance = getIntent().getDoubleExtra("balance", 0);
 		id = stock.getId();
 		q  = stock.getQuantity();
 		nt = (TextView) findViewById(R.id.name);
@@ -208,7 +208,7 @@ public class StockActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0xB && resultCode == Activity.RESULT_OK) {
 			q += data.getLongExtra("q", 0);
-			balance -= data.getLongExtra("q", 0) * price;
+			balance -= (double) (data.getLongExtra("q", 0) * price);
 			nf.setMaximumFractionDigits(2);
 			balancem.setTitle(nf.format(balance) + " $");
 			nf.setMaximumFractionDigits(4);

@@ -9,6 +9,7 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -19,8 +20,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 public class MainActivity extends FragmentActivity implements OnListChangedListener{
 
@@ -32,19 +36,65 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	public Fragment2 fragment2 = new Fragment2();
 	private MenuItem balancem;
 	private NumberFormat nf;
+	protected double balance;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		FontsOverride.setDefaultFont(this, "MONOSPACE", "Roboto_Light.ttf");
-		setContentView(R.layout.activity_main);
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-		mViewPager.setAdapter(mSectionsPagerAdapter);
-		nf = NumberFormat.getInstance();
-		nf.setMaximumFractionDigits(2);
-		nf.setGroupingUsed(true);
+		
+        final SharedPreferences prefs = getSharedPreferences(MainActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+
+        setContentView(R.layout.activity_main);
+
+        if (prefs.getBoolean("firstrun", true)) {
+			AlertDialog.Builder b = new AlertDialog.Builder(this);
+			
+			final View root = getLayoutInflater().inflate(R.layout.welcome, null);
+			b.setView(root);
+			
+			b.setTitle(R.string.welcome_message);
+			b.setCancelable(false);
+			b.setNegativeButton(R.string.quit, new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			b.setPositiveButton(android.R.string.ok, new OnClickListener() {@Override public void onClick(DialogInterface dialog, int which) {}});
+			final AlertDialog dialog = b.create();
+			dialog.show();
+			//Overriding the handler immediately after show is probably a better approach than OnShowListener as described below
+			dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {            
+				@Override
+				public void onClick(View v) {
+					EditText et = (EditText) root.findViewById(R.id.editText);
+					if (et.getText().length() > 0 && !et.getText().toString().equals(".")) {
+						balance = Double.valueOf(et.getText().toString());
+						prefs.edit().putFloat("balance", (float) balance).commit();
+						prefs.edit().putFloat("init_balance", (float) balance).commit();
+						prefs.edit().putBoolean("firstrun", false).commit();
+						mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+						mViewPager = (ViewPager) findViewById(R.id.pager);
+						mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+						mViewPager.setAdapter(mSectionsPagerAdapter);
+						nf = NumberFormat.getInstance();
+						nf.setMaximumFractionDigits(2);
+						nf.setGroupingUsed(true);
+						dialog.dismiss();
+					}
+				}
+			});
+		}
+        else {
+			mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+			mViewPager = (ViewPager) findViewById(R.id.pager);
+			mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+			mViewPager.setAdapter(mSectionsPagerAdapter);
+			nf = NumberFormat.getInstance();
+			nf.setMaximumFractionDigits(2);
+			nf.setGroupingUsed(true);
+		}
 	}
 
 	private void noConnectionDialog() {
@@ -142,7 +192,7 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	}
 
 	@Override
-	public void OnListChange(ArrayList<StockRow> l, float b) {
+	public void OnListChange(ArrayList<StockRow> l, double b) {
 		fragment2.listChanged(l, b);
 		balancem.setTitle(nf.format(b) + " $");
 	}

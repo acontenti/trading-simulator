@@ -55,7 +55,7 @@ public class Fragment1 extends Fragment {
 	private CustomAdapter adapter;
 	private ProgressBar pb;
 	private OnListChangedListener mCallback;
-	private float balance;
+	private double balance;
 
 	public Fragment1() {}
 
@@ -164,7 +164,7 @@ public class Fragment1 extends Fragment {
 			add((Stock) data.getSerializableExtra("STOCK"), false, false);
 		}
 		if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-			balance = data.getFloatExtra("balance", balance);
+			balance = data.getDoubleExtra("balance", balance);
 			boolean todelete = data.getBooleanExtra("delete", false);
 			add((Stock) data.getSerializableExtra("STOCK"), true, todelete);
 		}
@@ -204,7 +204,7 @@ public class Fragment1 extends Fragment {
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
-	    editor.putFloat("balance", balance);
+	    editor.putFloat("balance", (float) balance);
 	    editor.commit();
 	}
 	
@@ -219,7 +219,7 @@ public class Fragment1 extends Fragment {
 	}
 	
 	public interface OnListChangedListener {
-        public void OnListChange(ArrayList<StockRow> list, float balance);
+        public void OnListChange(ArrayList<StockRow> list, double balance);
         public void OnListLoad();
     }
 

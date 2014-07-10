@@ -51,4 +51,9 @@
     <string name="dialog_cantdelete">Impossibile cancellare</string>
     <string name="coveryourpos">Ricopri la tua vendita allo scoperto di azioni %s</string>
     <string name="sellyourshares">Vendi le azioni di %s che possiedi</string>
+    <string name="totalvalue">Valore totale</string>
+    <string name="sharesvalue">Valore delle azioni</string>
+    <string name="initialbalance">Liquidità iniziale</string>
+    <string name="welcome_message">Benvenuto in Trading Simulator</string>
+    <string name="set_initial_balance_message">Imposta la tua liquidità iniziale</string>
 </resources>

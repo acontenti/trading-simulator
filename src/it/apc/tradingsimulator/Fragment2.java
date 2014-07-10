@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -30,7 +29,9 @@ public class Fragment2 extends Fragment {
 	ArrayList<StockRow> list = new ArrayList<StockRow>();
 	private boolean firstrun = true;
 	private LinearLayout box;
-	private float balance;
+	private double balance;
+	private int colorBase = 0;
+	private float hue = 0;
 
 	public Fragment2() {}
 
@@ -48,9 +49,9 @@ public class Fragment2 extends Fragment {
 		return rootView;
 	}
 	
-	public void listChanged(ArrayList<StockRow> rowlist, float balance) {
+	public void listChanged(ArrayList<StockRow> rowlist, double b) {
 		list = rowlist;
-		this.balance = balance;
+		this.balance = b;
 		pb.setVisibility(View.GONE);
 		box.setVisibility(View.VISIBLE);
 		box.setEnabled(true);
@@ -63,6 +64,8 @@ public class Fragment2 extends Fragment {
 			pb.setVisibility(View.VISIBLE);
 			box.setVisibility(View.INVISIBLE);
 			box.setEnabled(false);
+			colorBase = 0;
+			hue = 0;
 		}
 		firstrun = false;
 	}
@@ -73,13 +76,31 @@ public class Fragment2 extends Fragment {
 			for (StockRow s : list) {
 				if (s.getQuantity() != 0) {
 					PieSlice slice = new PieSlice();
-					slice.setColor(Color.parseColor("#99CC00"));
-					slice.setValue(s.getQuantity());
+					slice.setValue(Math.abs(s.getQuantity()));
+					slice.setColor(Color.HSVToColor(new float[] {hue , 0.7f, 0.9f}));
+					hue += 97;
+					hue %= 360;
 					slice.setTitle(s.getName());
 					pg.addSlice(slice);
 				}
 			}
 		}
+	}
+	
+	public int generateRandomColor(int light) {
+
+	    int red = (colorBase  & 3) << 6;
+	    int green = (colorBase & 0xc) << 4;
+	    int blue = (colorBase & 0x30) << 2;
+	    
+	    // mix the color
+        red = (red + light) / 1;
+        green = (green + light) / 1;
+        blue = (blue + light) / 1;
+
+	    int color = Color.rgb(red, green, blue);
+		colorBase += 29;
+	    return color;
 	}
 	
 	class WizardPagerAdapter extends PagerAdapter {
@@ -90,7 +111,7 @@ public class Fragment2 extends Fragment {
 			switch (position) {
 			case 0:
 				lg = new LineGraph(getActivity());
-				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 200));
+				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 32));
 				
 				Line l = new Line();
 				LinePoint p = new LinePoint();
@@ -105,10 +126,28 @@ public class Fragment2 extends Fragment {
 				p.setX(10);
 				p.setY(4);
 				l.addPoint(p);
+				l.addPoint(p);
+				p = new LinePoint();
+				p.setX(18);
+				p.setY(18);
+				l.addPoint(p);
+				p = new LinePoint();
+				p.setX(20);
+				p.setY(24);
+				l.addPoint(p);
+				l.addPoint(p);
+				p = new LinePoint();
+				p.setX(25);
+				p.setY(2);
+				l.addPoint(p);
+				p = new LinePoint();
+				p.setX(30);
+				p.setY(4);
+				l.addPoint(p);
 				l.setColor(Color.parseColor("#FFBB33"));
 
 				lg.addLine(l);
-				lg.setRangeY(0, 10);
+				lg.setRangeY(0, 30);
 				lg.setLineToFill(0);
 				
 				v = lg;
@@ -116,10 +155,13 @@ public class Fragment2 extends Fragment {
 			case 1:
 				pg = new PieGraph(getActivity());
 				pg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 200));
+				
 				pg.setOnSliceClickedListener(new OnSliceClickedListener() {
 					@Override
 					public void onClick(int index) {
-						Toast.makeText(getActivity(), pg.getSlice(index).getTitle(), Toast.LENGTH_SHORT).show();
+						if (index >= 0) {
+							Toast.makeText(getActivity(), pg.getSlice(index).getTitle(), Toast.LENGTH_SHORT).show();
+						}
 					}
 				});
 				v = pg;
