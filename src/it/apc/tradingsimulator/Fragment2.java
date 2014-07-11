@@ -1,7 +1,10 @@
 package it.apc.tradingsimulator;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,10 +15,12 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.echo.holographlibrary.Line;
 import com.echo.holographlibrary.LineGraph;
+import com.echo.holographlibrary.LineGraph.OnPointClickedListener;
 import com.echo.holographlibrary.LinePoint;
 import com.echo.holographlibrary.PieGraph;
 import com.echo.holographlibrary.PieGraph.OnSliceClickedListener;
@@ -29,9 +34,21 @@ public class Fragment2 extends Fragment {
 	ArrayList<StockRow> list = new ArrayList<StockRow>();
 	private boolean firstrun = true;
 	private LinearLayout box;
-	private double balance;
+	private double balance = 0;
 	private int colorBase = 0;
 	private float hue = 0;
+	private TextView balt;
+	private TextView init;
+	private TextView shvt;
+	private TextView tvlt;
+	private SharedPreferences prefs;
+	private double initbalance = 0;
+	private NumberFormat nf;
+	private double sharesvalue;
+	private double totvalue;
+	private TextView chpt;
+	private double change;
+	private double pchange;
 
 	public Fragment2() {}
 
@@ -45,18 +62,44 @@ public class Fragment2 extends Fragment {
 		VerticalViewPager vvp = (VerticalViewPager) rootView.findViewById(R.id.verticalViewPager1);
 		WizardPagerAdapter a = new WizardPagerAdapter();
 		vvp.setAdapter(a);
-		
+		balt = (TextView) rootView.findViewById(R.id.balance);
+		init = (TextView) rootView.findViewById(R.id.initialbalance);
+		shvt = (TextView) rootView.findViewById(R.id.sharesvalue);
+		tvlt = (TextView) rootView.findViewById(R.id.totalvalue);
+		chpt = (TextView) rootView.findViewById(R.id.change);
+		prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+		initbalance  = (double) prefs.getFloat("init_balance", 0);
+		nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
+		nf.setGroupingUsed(true);
 		return rootView;
 	}
 	
 	public void listChanged(ArrayList<StockRow> rowlist, double b) {
 		list = rowlist;
-		this.balance = b;
+		balance = b;
+		balt.setText(nf.format(balance) + " $");
+		init.setText(nf.format(initbalance) + " $");
+		sharesvalue = 0;
+		for (StockRow stockRow : rowlist) {
+			sharesvalue += (double) (stockRow.getQuantity() * stockRow.getPrice());
+		}
+		shvt.setText(nf.format(sharesvalue) + " $");
+		totvalue = sharesvalue + balance;
+		tvlt.setText(nf.format(totvalue) + " $");
+		change = balance - initbalance;
+		pchange = change / initbalance * 100;
+		String sign = (change < 0 ? "" : "+");
+		chpt.setText(sign + nf.format(change) + " $     (" + sign + nf.format(pchange) + "%)");
+		int color = (change < 0 ? Color.RED : Color.parseColor("#77AA11"));
+		chpt.setTextColor(color);
+		
+		updateChart();
+		
 		pb.setVisibility(View.GONE);
 		box.setVisibility(View.VISIBLE);
 		box.setEnabled(true);
-		updateChart();
-		//TODO update UI
 	}
 	
 	public void loadingStarted() {
@@ -111,9 +154,9 @@ public class Fragment2 extends Fragment {
 			switch (position) {
 			case 0:
 				lg = new LineGraph(getActivity());
-				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 200));
+				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 250));
 				
-				Line l = new Line();
+				final Line l = new Line();
 				LinePoint p = new LinePoint();
 				p.setX(0);
 				p.setY(5);
@@ -149,12 +192,18 @@ public class Fragment2 extends Fragment {
 				lg.addLine(l);
 				lg.setRangeY(0, 30);
 				lg.setLineToFill(0);
+				lg.setOnPointClickedListener(new OnPointClickedListener() {
+					@Override
+					public void onClick(int lineIndex, int pointIndex) {
+						Toast.makeText(getActivity(), nf.format(l.getPoint(pointIndex).getY()), Toast.LENGTH_SHORT).show();
+					}
+				});
 				
 				v = lg;
 				break;
 			case 1:
 				pg = new PieGraph(getActivity());
-				pg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 200));
+				pg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 250));
 				
 				pg.setOnSliceClickedListener(new OnSliceClickedListener() {
 					@Override

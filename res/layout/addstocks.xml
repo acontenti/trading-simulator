@@ -57,7 +57,6 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="4dp"
         android:layout_below="@+id/box"
-        android:layout_alignParentBottom="true"
         tools:listitem="@layout/add_stock_row" >
     </ListView>
 

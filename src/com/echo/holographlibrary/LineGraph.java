@@ -83,7 +83,7 @@ public class LineGraph extends View {
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.LineGraph, 0, 0);
-        mFillColor = a.getColor(R.styleable.LineGraph_lineStrokeColor, Color.BLACK);
+        mFillColor = Color.LTGRAY;
         mAxisColor = a.getColor(R.styleable.LineGraph_lineAxisColor, Color.LTGRAY);
         mStrokeWidth = a.getDimension(R.styleable.LineGraph_lineStrokeWidth, 2);
         mStrokeSpacing = a.getDimensionPixelSize(R.styleable.LineGraph_lineStrokeSpacing, 10);

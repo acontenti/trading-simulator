@@ -16,7 +16,7 @@
 	    <it.apc.tradingsimulator.VerticalViewPager
 	        android:id="@+id/verticalViewPager1"
 	        android:layout_width="match_parent"
-	        android:layout_height="200dp"
+	        android:layout_height="250dp"
 	        android:padding="8dp"
 	        android:background="@drawable/line" />
 	        
@@ -35,7 +35,6 @@
 	            android:orientation="vertical" >
 	            
 			    <TextView
-			        android:id="@+id/textView1"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
 			        android:text="@string/balance" />
@@ -44,7 +43,7 @@
 			        android:id="@+id/balance"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="8dp"
+			        android:layout_marginBottom="10dp"
 			        android:layout_marginRight="8dp"
 			        android:background="@drawable/line"
 			        android:gravity="right"
@@ -52,7 +51,6 @@
 			        android:textAppearance="?android:attr/textAppearanceLarge" />
 			
 			    <TextView
-			        android:id="@+id/textView2"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
 			        android:text="@string/sharesvalue" />
@@ -61,7 +59,7 @@
 			        android:id="@+id/sharesvalue"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="8dp"
+			        android:layout_marginBottom="10dp"
 			        android:layout_marginRight="8dp"
 			        android:background="@drawable/line"
 			        android:gravity="right"
@@ -69,7 +67,6 @@
 			        android:textAppearance="?android:attr/textAppearanceLarge" />
 			
 			    <TextView
-			        android:id="@+id/textView3"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
 			        android:text="@string/totalvalue" />
@@ -78,7 +75,7 @@
 			        android:id="@+id/totalvalue"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="8dp"
+			        android:layout_marginBottom="10dp"
 			        android:layout_marginRight="8dp"
 			        android:background="@drawable/line"
 			        android:gravity="right"
@@ -86,7 +83,6 @@
 			        android:textAppearance="?android:attr/textAppearanceLarge" />
 			
 			    <TextView
-			        android:id="@+id/textView4"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
 			        android:text="@string/initialbalance" />
@@ -95,13 +91,29 @@
 			        android:id="@+id/initialbalance"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="8dp"
+			        android:layout_marginBottom="10dp"
 			        android:layout_marginRight="8dp"
 			        android:background="@drawable/line"
 			        android:gravity="right"
 			        android:text="200.000,00$"
 			        android:textAppearance="?android:attr/textAppearanceLarge" />
-	            
+			
+			    <TextView
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:text="@string/changep" />
+			
+			    <TextView
+			        android:id="@+id/change"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginBottom="10dp"
+			        android:layout_marginRight="8dp"
+			        android:background="@drawable/line"
+			        android:gravity="right"
+			        android:text="+258,70$  (+1,25%)"
+			        android:textAppearance="?android:attr/textAppearanceLarge" />
+			    	            
 	        </LinearLayout>
 	        
 	    </ScrollView>

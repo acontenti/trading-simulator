@@ -9,9 +9,9 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +36,8 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	private MenuItem balancem;
 	private NumberFormat nf;
 	protected double balance;
+	private MenuItem refreshm;
+	private boolean firstrun = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,8 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		balancem = menu.findItem(R.id.balance);
+		refreshm = menu.findItem(R.id.action_update);
+		refreshm.setVisible(false);
 		return true;
 	}
 	
@@ -193,12 +196,17 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 
 	@Override
 	public void OnListChange(ArrayList<StockRow> l, double b) {
+		refreshm.setVisible(true);
 		fragment2.listChanged(l, b);
 		balancem.setTitle(nf.format(b) + " $");
 	}
 
 	@Override
 	public void OnListLoad() {
+		if (!firstrun) {
+			refreshm.setVisible(false);
+		}
+		firstrun = false;
 		fragment2.loadingStarted();
 	}
 }

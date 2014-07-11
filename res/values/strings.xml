@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+
     <string name="app_name">Trading Simulator</string>
     <string name="action_settings">Settings</string>
     <string name="title_section1">Stocks</string>
@@ -17,6 +18,7 @@
     <string name="miny">Min. year</string>
     <string name="close">Last Close</string>
     <string name="open">Open</string>
+
     <string-array name="chartTimes">
         <item>1 Day</item>
         <item>5 Day</item>
@@ -32,8 +34,10 @@
         <item>Bar</item>
         <item>Candlestick</item>
     </string-array>
+
     <string name="ownedshares">Owned shares</string>
     <string name="value">Value</string>
+
     <string-array name="chartTypesValues">
         <item>l</item>
         <item>b</item>
@@ -49,6 +53,7 @@
         <item>5y</item>
         <item>my</item>
     </string-array>
+
     <string name="dialog_continue">Continue</string>
     <string name="dialog_message">You\'re about to make a short sale. You will be forced to buy this shares soon. Proceed?</string>
     <string name="update">Update</string>
@@ -71,4 +76,6 @@
     <string name="sharesvalue">Shares value</string>
     <string name="welcome_message">Welcome to Trading Simulator</string>
     <string name="set_initial_balance_message">Set your initial balance</string>
+    <string name="title_activity_chart">ChartActivity</string>
+
 </resources>

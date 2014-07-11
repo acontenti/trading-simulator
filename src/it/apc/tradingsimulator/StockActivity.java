@@ -1,6 +1,7 @@
 package it.apc.tradingsimulator;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -76,6 +77,7 @@ public class StockActivity extends Activity {
 	protected boolean todelete = false;
 	private MenuItem balancem;
 	NumberFormat nf;
+	private Bitmap chartbitmap;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -101,6 +103,22 @@ public class StockActivity extends Activity {
 		mxyt = (TextView) findViewById(R.id.maxy);
 		mnyt = (TextView) findViewById(R.id.miny);
 		chart = (ImageView) findViewById(R.id.chart);
+		chart.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (chartbitmap != null) {
+					int[] screenLocation = new int[2];
+		            v.getLocationOnScreen(screenLocation);
+		            Intent subActivity = new Intent(StockActivity.this, ChartActivity.class);
+		            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		            chartbitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		            byte[] bytes = stream.toByteArray(); 
+		            subActivity.putExtra("b", bytes);
+		            Bundle scaleBundle = ActivityOptions.makeThumbnailScaleUpAnimation(v, chartbitmap, screenLocation[0], screenLocation[1]).toBundle();
+	                startActivity(subActivity, scaleBundle);
+				}
+			}
+		});
 		pb = (ProgressBar) findViewById(R.id.progressBar);
 		pb.setVisibility(View.GONE);
 		sv = (LinearLayout) findViewById(R.id.box);
@@ -391,7 +409,8 @@ public class StockActivity extends Activity {
 		mndt.setText(map.get("mind") + " $");
 		mxyt.setText(map.get("maxy") + " $");
 		mnyt.setText(map.get("miny") + " $");
-		chart.setImageBitmap((Bitmap) map.get("chart"));
+		chartbitmap = (Bitmap) map.get("chart");
+		chart.setImageBitmap(chartbitmap);
 	}
 
 }
