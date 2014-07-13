@@ -21,23 +21,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
@@ -48,6 +55,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -68,6 +76,8 @@ public class Fragment1 extends Fragment {
 	private ProgressBar addpb;
 	RelativeLayout sbox;
 	private EditText et;
+	private CircleButton addbt;
+	protected boolean addstock = true;
 
 	public Fragment1() {}
 
@@ -85,7 +95,7 @@ public class Fragment1 extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
- 		final CircleButton addbt = (CircleButton) rootView.findViewById(R.id.add);
+ 		addbt = (CircleButton) rootView.findViewById(R.id.add);
        
 		lv = (ListView) rootView.findViewById(R.id.listView);
 		lv.setOnScrollListener(new OnScrollListener() {
@@ -136,6 +146,16 @@ public class Fragment1 extends Fragment {
 				prevlvy = firstVisibleItem;
 			}
 		});
+		LinearLayout contv = (LinearLayout) rootView.findViewById(R.id.container);
+		contv.setOnTouchListener(new OnTouchListener() {
+			@Override public boolean onTouch(View v, MotionEvent e) {
+				if (e.getAction() == MotionEvent.ACTION_DOWN && sbox.getVisibility() == View.VISIBLE) {
+		        	onBackPressed();
+		        	return true;
+				}
+				return false;
+			}
+		});
 
 		adapter = new CustomAdapter(getActivity(), R.layout.stocksrow, rowlist);
 		pb = (ProgressBar) rootView.findViewById(R.id.progressBar);
@@ -160,27 +180,42 @@ public class Fragment1 extends Fragment {
 		addbt.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-		        lv.setEnabled(false);
-		        lv.setAlpha(0.25f);
-		        AnimationSet animation = new AnimationSet(true);
-				animation.setDuration(200);
-				animation.addAnimation(new AlphaAnimation(0, 1));
-				animation.addAnimation(new TranslateAnimation(100, 0, 0, 0));
-				animation.setInterpolator(new AccelerateDecelerateInterpolator());
-				animation.setAnimationListener(new AnimationListener() {
-					@Override public void onAnimationStart(Animation animation) {}
-					@Override public void onAnimationRepeat(Animation animation) {}
-					@Override public void onAnimationEnd(Animation animation) {
-						sbox.setVisibility(View.VISIBLE);
-					}
-				});
-				sbox.startAnimation(animation);
-/*				int[] screenLocation = new int[2];
-	            v.getLocationOnScreen(screenLocation);
-	            Intent subActivity = new Intent(getActivity(), AddStockActivity.class);
-	            Bundle scaleBundle = ActivityOptions.makeScaleUpAnimation(v, screenLocation[0], screenLocation[1], v.getWidth(), v.getHeight()).toBundle();
-                getActivity().startActivityForResult(subActivity, 0xADD, scaleBundle);
-*/			}
+		        if (addstock) {
+		        	addstock = false;
+					lv.setEnabled(false);
+					lv.setAlpha(0.25f);
+					AnimationSet animation = new AnimationSet(true);
+					animation.setDuration(200);
+					animation.addAnimation(new AlphaAnimation(0, 1));
+					animation.addAnimation(new TranslateAnimation(100, 0, 0, 0));
+					animation.setInterpolator(new AccelerateDecelerateInterpolator());
+					animation.setAnimationListener(new AnimationListener() {
+						@Override public void onAnimationStart(Animation animation) {}
+						@Override public void onAnimationRepeat(Animation animation) {}
+						@Override public void onAnimationEnd(Animation animation) {
+							sbox.setVisibility(View.VISIBLE);
+						}
+					});
+					sbox.startAnimation(animation);
+					AnimationSet btanim = new AnimationSet(true);
+					btanim.setDuration(800);
+					btanim.addAnimation(new RotateAnimation(0, 45, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f));
+					btanim.setInterpolator(new AccelerateDecelerateInterpolator());
+					btanim.setFillAfter(true);
+					ValueAnimator va = ValueAnimator.ofObject(new ArgbEvaluator(), Color.parseColor("#FF99CC00"), Color.RED);
+					va.setDuration(800);
+					va.addUpdateListener(new AnimatorUpdateListener() {
+						@Override public void onAnimationUpdate(ValueAnimator animation) {
+							addbt.setColor((int) animation.getAnimatedValue());
+						}
+					});
+					addbt.startAnimation(btanim);
+					va.start();
+				}
+		        else {
+					onBackPressed();
+				}
+		    }
 		});
 		sbox = (RelativeLayout) rootView.findViewById(R.id.searchbox);
 		sbox.setVisibility(View.GONE);
@@ -214,6 +249,7 @@ public class Fragment1 extends Fragment {
 	}
 
 	public void onBackPressed() {
+    	addstock = true;
         AnimationSet animation = new AnimationSet(true);
 		animation.setDuration(200);
 		animation.addAnimation(new AlphaAnimation(1, 0));
@@ -227,6 +263,20 @@ public class Fragment1 extends Fragment {
 			}
 		});
 		sbox.startAnimation(animation);
+        AnimationSet btanim = new AnimationSet(true);
+		btanim.setDuration(800);
+		btanim.addAnimation(new RotateAnimation(45, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f));
+		btanim.setInterpolator(new AccelerateDecelerateInterpolator());
+		btanim.setFillAfter(true);
+		ValueAnimator va = ValueAnimator.ofObject(new ArgbEvaluator(), Color.RED, Color.parseColor("#FF99CC00"));
+		va.setDuration(800);
+		va.addUpdateListener(new AnimatorUpdateListener() {
+			@Override public void onAnimationUpdate(ValueAnimator animation) {
+				addbt.setColor((int) animation.getAnimatedValue());
+			}
+		});
+		addbt.startAnimation(btanim);
+		va.start();
 		addadapter.clear();
 		addadapter.notifyDataSetChanged();
 		et.setText("");

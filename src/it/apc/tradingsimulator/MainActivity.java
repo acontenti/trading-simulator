@@ -140,6 +140,9 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	        //finish();
 	        return true;
 	    case R.id.action_update:
+			if (mViewPager != null && mViewPager.getCurrentItem() == 0 && fragment1.sbox.getVisibility() == View.VISIBLE) {
+				fragment1.onBackPressed();
+			}
 	    	fragment1.update();
 	    	return true;
 	    }
