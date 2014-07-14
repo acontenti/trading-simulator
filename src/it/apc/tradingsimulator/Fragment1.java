@@ -41,12 +41,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -55,7 +56,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -116,8 +116,7 @@ public class Fragment1 extends Fragment {
 					animation.setAnimationListener(new AnimationListener() {
 						@Override public void onAnimationStart(Animation animation) {}
 						@Override public void onAnimationRepeat(Animation animation) {}
-						@Override
-						public void onAnimationEnd(Animation animation) {
+						@Override public void onAnimationEnd(Animation animation) {
 							addbt.setVisibility(View.GONE);
 							animfinished = true;
 						}
@@ -132,11 +131,11 @@ public class Fragment1 extends Fragment {
 					animation.addAnimation(new TranslateAnimation(0, 0, 100, 0));
 					animation.setInterpolator(new AccelerateDecelerateInterpolator());
 					animation.setAnimationListener(new AnimationListener() {
-						@Override public void onAnimationStart(Animation animation) {}
-						@Override public void onAnimationRepeat(Animation animation) {}
-						@Override
-						public void onAnimationEnd(Animation animation) {
+						@Override public void onAnimationStart(Animation animation) {
 							addbt.setVisibility(View.VISIBLE);
+							}
+						@Override public void onAnimationRepeat(Animation animation) {}
+						@Override public void onAnimationEnd(Animation animation) {
 							animfinished = true;
 						}
 					});
@@ -144,16 +143,6 @@ public class Fragment1 extends Fragment {
 					addbt.startAnimation(animation);
 				}
 				prevlvy = firstVisibleItem;
-			}
-		});
-		LinearLayout contv = (LinearLayout) rootView.findViewById(R.id.container);
-		contv.setOnTouchListener(new OnTouchListener() {
-			@Override public boolean onTouch(View v, MotionEvent e) {
-				if (e.getAction() == MotionEvent.ACTION_DOWN && sbox.getVisibility() == View.VISIBLE) {
-		        	onBackPressed();
-		        	return true;
-				}
-				return false;
 			}
 		});
 
@@ -187,14 +176,14 @@ public class Fragment1 extends Fragment {
 					AnimationSet animation = new AnimationSet(true);
 					animation.setDuration(200);
 					animation.addAnimation(new AlphaAnimation(0, 1));
-					animation.addAnimation(new TranslateAnimation(100, 0, 0, 0));
+					animation.addAnimation(new TranslateAnimation(500, 0, 0, 0));
 					animation.setInterpolator(new AccelerateDecelerateInterpolator());
 					animation.setAnimationListener(new AnimationListener() {
-						@Override public void onAnimationStart(Animation animation) {}
-						@Override public void onAnimationRepeat(Animation animation) {}
-						@Override public void onAnimationEnd(Animation animation) {
+						@Override public void onAnimationStart(Animation animation) {
 							sbox.setVisibility(View.VISIBLE);
 						}
+						@Override public void onAnimationRepeat(Animation animation) {}
+						@Override public void onAnimationEnd(Animation animation) {}
 					});
 					sbox.startAnimation(animation);
 					AnimationSet btanim = new AnimationSet(true);
@@ -219,11 +208,21 @@ public class Fragment1 extends Fragment {
 		});
 		sbox = (RelativeLayout) rootView.findViewById(R.id.searchbox);
 		sbox.setVisibility(View.GONE);
-		ListView lv = (ListView) rootView.findViewById(R.id.listView1);
+		rootView.findViewById(R.id.container).setOnTouchListener(new OnTouchListener() {
+			@Override public boolean onTouch(View v, MotionEvent e) {
+				if (e.getAction() == MotionEvent.ACTION_DOWN && sbox.getVisibility() == View.VISIBLE) {
+		        	onBackPressed();
+		        	return true;
+				}
+				return false;
+			}
+		});
+
+		ListView addlv = (ListView) rootView.findViewById(R.id.listView1);
 		addadapter = new AddStockCustomAdapter(getActivity(), R.layout.add_stock_row, addlist);
-		lv.setAdapter(addadapter);
+		addlv.setAdapter(addadapter);
 		et = (EditText) rootView.findViewById(R.id.editText);
-		lv.setOnItemClickListener(new OnItemClickListener() {
+		addlv.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Stock s = addlist.get(position);

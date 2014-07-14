@@ -16,7 +16,7 @@
 	    <it.apc.tradingsimulator.VerticalViewPager
 	        android:id="@+id/verticalViewPager1"
 	        android:layout_width="match_parent"
-	        android:layout_height="250dp"
+	        android:layout_height="200dp"
 	        android:padding="8dp"
 	        android:background="@drawable/line" />
 	        
@@ -30,74 +30,108 @@
 	            android:layout_height="wrap_content"
 	            android:layout_marginBottom="16dp"
 	            android:layout_marginLeft="16dp"
-	            android:layout_marginRight="8dp"
-	            android:layout_marginTop="8dp"
+	            android:layout_marginRight="16dp"
+	            android:layout_marginTop="16dp"
 	            android:orientation="vertical" >
+
+	            <TableLayout
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content" >
+
+	                <TableRow
+	                    android:id="@+id/tableRow1"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content" >
+
+	                    <TextView
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_weight="1"
+	                        android:text="@string/balance" />
+
+	                    <TextView
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_weight="1"
+	                        android:text="@string/sharesvalue" />
+	                </TableRow>
+
+	                <TableRow
+	                    android:id="@+id/tableRow2"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginBottom="10dp"
+	                    android:background="@drawable/line" >
+
+	                    <TextView
+	                        android:id="@+id/balance"
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_marginRight="8dp"
+	                        android:layout_weight="1"
+	                        android:gravity="right"
+	                        android:text="150.249,45$"
+	                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	                    <TextView
+	                        android:id="@+id/sharesvalue"
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_marginRight="8dp"
+	                        android:layout_weight="1"
+	                        android:gravity="right"
+	                        android:text="50.104,68$"
+	                        android:textAppearance="?android:attr/textAppearanceLarge" />
+	                </TableRow>
+
+	                <TableRow
+	                    android:id="@+id/tableRow3"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content" >
+
+	                    <TextView
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_weight="1"
+	                        android:text="@string/initialbalance" />
+
+	                    <TextView
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_weight="1"
+	                        android:text="@string/totalvalue" />
+	                </TableRow>
+
+	                <TableRow
+	                    android:id="@+id/tableRow4"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginBottom="10dp"
+	                    android:background="@drawable/line" >
+
+	                    <TextView
+	                        android:id="@+id/initialbalance"
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_marginRight="8dp"
+	                        android:layout_weight="1"
+	                        android:gravity="right"
+	                        android:text="200.000,00$"
+	                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	                    <TextView
+	                        android:id="@+id/totalvalue"
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_marginRight="8dp"
+	                        android:layout_weight="1"
+	                        android:gravity="right"
+	                        android:text="200.355,14$"
+	                        android:textAppearance="?android:attr/textAppearanceLarge" />
+	                </TableRow>
+	                
+	            </TableLayout>
 	            
-			    <TextView
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:text="@string/balance" />
-			
-			    <TextView
-			        android:id="@+id/balance"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="10dp"
-			        android:layout_marginRight="8dp"
-			        android:background="@drawable/line"
-			        android:gravity="right"
-			        android:text="150.249,45$"
-			        android:textAppearance="?android:attr/textAppearanceLarge" />
-			
-			    <TextView
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:text="@string/sharesvalue" />
-			
-			    <TextView
-			        android:id="@+id/sharesvalue"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="10dp"
-			        android:layout_marginRight="8dp"
-			        android:background="@drawable/line"
-			        android:gravity="right"
-			        android:text="50.104,68$"
-			        android:textAppearance="?android:attr/textAppearanceLarge" />
-			
-			    <TextView
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:text="@string/totalvalue" />
-			
-			    <TextView
-			        android:id="@+id/totalvalue"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="10dp"
-			        android:layout_marginRight="8dp"
-			        android:background="@drawable/line"
-			        android:gravity="right"
-			        android:text="200.355,14$"
-			        android:textAppearance="?android:attr/textAppearanceLarge" />
-			
-			    <TextView
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:text="@string/initialbalance" />
-			
-			    <TextView
-			        android:id="@+id/initialbalance"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="10dp"
-			        android:layout_marginRight="8dp"
-			        android:background="@drawable/line"
-			        android:gravity="right"
-			        android:text="200.000,00$"
-			        android:textAppearance="?android:attr/textAppearanceLarge" />
-			
 			    <TextView
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -107,8 +141,6 @@
 			        android:id="@+id/change"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="10dp"
-			        android:layout_marginRight="8dp"
 			        android:background="@drawable/line"
 			        android:gravity="right"
 			        android:text="+258,70$  (+1,25%)"

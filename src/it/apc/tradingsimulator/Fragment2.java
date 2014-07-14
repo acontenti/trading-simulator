@@ -154,7 +154,7 @@ public class Fragment2 extends Fragment {
 			switch (position) {
 			case 0:
 				lg = new LineGraph(getActivity());
-				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 250));
+				lg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 200));
 				
 				final Line l = new Line();
 				LinePoint p = new LinePoint();
@@ -203,7 +203,7 @@ public class Fragment2 extends Fragment {
 				break;
 			case 1:
 				pg = new PieGraph(getActivity());
-				pg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 250));
+				pg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 200));
 				
 				pg.setOnSliceClickedListener(new OnSliceClickedListener() {
 					@Override

@@ -28,7 +28,7 @@
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:background="@android:color/transparent"
@@ -38,14 +38,16 @@
             android:id="@+id/searchbox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:layout_weight="1"
             android:background="@android:drawable/dialog_holo_light_frame" >
 
             <ListView
                 android:id="@+id/listView1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_above="@+id/box"
+                android:layout_alignParentTop="true"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -55,10 +57,9 @@
                 android:id="@+id/box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:paddingTop="8dp" >
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true" >
 
                 <EditText
                     android:id="@+id/editText"
@@ -66,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="8dp"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -113,6 +114,7 @@
             android:src="@drawable/ic_action_add"
             app:cb_color="#FF99CC00"
             app:cb_pressed_ring_width="8dip" />
+        
     </LinearLayout>
 
     <ProgressBar
