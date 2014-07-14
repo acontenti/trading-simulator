@@ -98,6 +98,16 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 		}
 	}
 
+	@Override
+	public void onBackPressed() {
+		if (mViewPager != null && mViewPager.getCurrentItem() == 0 && fragment1.sbox.getVisibility() == View.VISIBLE) {
+			fragment1.onBackPressed();
+		}
+		else {
+			super.onBackPressed();
+		}
+	}
+	
 	private void noConnectionDialog() {
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
 		b.setTitle(R.string.noconnection_title);
@@ -130,6 +140,9 @@ public class MainActivity extends FragmentActivity implements OnListChangedListe
 	        //finish();
 	        return true;
 	    case R.id.action_update:
+			if (mViewPager != null && mViewPager.getCurrentItem() == 0 && fragment1.sbox.getVisibility() == View.VISIBLE) {
+				fragment1.onBackPressed();
+			}
 	    	fragment1.update();
 	    	return true;
 	    }

@@ -83,7 +83,7 @@ public class StockActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stock);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_action_go));
+		getActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_action_1405392283_591277_arrow_left));
 		stock = (Stock) getIntent().getSerializableExtra("STOCK");
 		balance = getIntent().getDoubleExtra("balance", 0);
 		id = stock.getId();

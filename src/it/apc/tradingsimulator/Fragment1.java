@@ -17,33 +17,48 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class Fragment1 extends Fragment {
@@ -56,13 +71,20 @@ public class Fragment1 extends Fragment {
 	private ProgressBar pb;
 	private OnListChangedListener mCallback;
 	private double balance;
+	private ArrayList<Stock> addlist = new ArrayList<Stock>();
+	private AddStockCustomAdapter addadapter;
+	private ProgressBar addpb;
+	RelativeLayout sbox;
+	private EditText et;
+	private CircleButton addbt;
+	protected boolean addstock = true;
 
 	public Fragment1() {}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment1, container, false);
+		View rootView = inflater.inflate(R.layout.fragment1_1, container, false);
 //      load tasks from preference
         SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
         
@@ -73,7 +95,7 @@ public class Fragment1 extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
- 		final CircleButton addbt = (CircleButton) rootView.findViewById(R.id.add);
+ 		addbt = (CircleButton) rootView.findViewById(R.id.add);
        
 		lv = (ListView) rootView.findViewById(R.id.listView);
 		lv.setOnScrollListener(new OnScrollListener() {
@@ -94,8 +116,7 @@ public class Fragment1 extends Fragment {
 					animation.setAnimationListener(new AnimationListener() {
 						@Override public void onAnimationStart(Animation animation) {}
 						@Override public void onAnimationRepeat(Animation animation) {}
-						@Override
-						public void onAnimationEnd(Animation animation) {
+						@Override public void onAnimationEnd(Animation animation) {
 							addbt.setVisibility(View.GONE);
 							animfinished = true;
 						}
@@ -110,11 +131,11 @@ public class Fragment1 extends Fragment {
 					animation.addAnimation(new TranslateAnimation(0, 0, 100, 0));
 					animation.setInterpolator(new AccelerateDecelerateInterpolator());
 					animation.setAnimationListener(new AnimationListener() {
-						@Override public void onAnimationStart(Animation animation) {}
-						@Override public void onAnimationRepeat(Animation animation) {}
-						@Override
-						public void onAnimationEnd(Animation animation) {
+						@Override public void onAnimationStart(Animation animation) {
 							addbt.setVisibility(View.VISIBLE);
+							}
+						@Override public void onAnimationRepeat(Animation animation) {}
+						@Override public void onAnimationEnd(Animation animation) {
 							animfinished = true;
 						}
 					});
@@ -148,16 +169,120 @@ public class Fragment1 extends Fragment {
 		addbt.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int[] screenLocation = new int[2];
-	            v.getLocationOnScreen(screenLocation);
-	            Intent subActivity = new Intent(getActivity(), AddStockActivity.class);
-	            Bundle scaleBundle = ActivityOptions.makeScaleUpAnimation(v, screenLocation[0], screenLocation[1], v.getWidth(), v.getHeight()).toBundle();
-                getActivity().startActivityForResult(subActivity, 0xADD, scaleBundle);
+		        if (addstock) {
+		        	addstock = false;
+					lv.setEnabled(false);
+					lv.setAlpha(0.25f);
+					AnimationSet animation = new AnimationSet(true);
+					animation.setDuration(200);
+					animation.addAnimation(new AlphaAnimation(0, 1));
+					animation.addAnimation(new TranslateAnimation(500, 0, 0, 0));
+					animation.setInterpolator(new AccelerateDecelerateInterpolator());
+					animation.setAnimationListener(new AnimationListener() {
+						@Override public void onAnimationStart(Animation animation) {
+							sbox.setVisibility(View.VISIBLE);
+						}
+						@Override public void onAnimationRepeat(Animation animation) {}
+						@Override public void onAnimationEnd(Animation animation) {}
+					});
+					sbox.startAnimation(animation);
+					AnimationSet btanim = new AnimationSet(true);
+					btanim.setDuration(800);
+					btanim.addAnimation(new RotateAnimation(0, 45, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f));
+					btanim.setInterpolator(new AccelerateDecelerateInterpolator());
+					btanim.setFillAfter(true);
+					ValueAnimator va = ValueAnimator.ofObject(new ArgbEvaluator(), Color.parseColor("#FF99CC00"), Color.RED);
+					va.setDuration(800);
+					va.addUpdateListener(new AnimatorUpdateListener() {
+						@Override public void onAnimationUpdate(ValueAnimator animation) {
+							addbt.setColor((int) animation.getAnimatedValue());
+						}
+					});
+					addbt.startAnimation(btanim);
+					va.start();
+				}
+		        else {
+					onBackPressed();
+				}
+		    }
+		});
+		sbox = (RelativeLayout) rootView.findViewById(R.id.searchbox);
+		sbox.setVisibility(View.GONE);
+		rootView.findViewById(R.id.container).setOnTouchListener(new OnTouchListener() {
+			@Override public boolean onTouch(View v, MotionEvent e) {
+				if (e.getAction() == MotionEvent.ACTION_DOWN && sbox.getVisibility() == View.VISIBLE) {
+		        	onBackPressed();
+		        	return true;
+				}
+				return false;
 			}
 		});
+
+		ListView addlv = (ListView) rootView.findViewById(R.id.listView1);
+		addadapter = new AddStockCustomAdapter(getActivity(), R.layout.add_stock_row, addlist);
+		addlv.setAdapter(addadapter);
+		et = (EditText) rootView.findViewById(R.id.editText);
+		addlv.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Stock s = addlist.get(position);
+				s.setId(s.getId().substring(0, (int) s.getQuantity()));
+				s.setQuantity(0);
+				onBackPressed();
+				add(s, false, false);
+			}
+		});
+		final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		ImageButton searchbtn = (ImageButton) rootView.findViewById(R.id.searchbtn);
+		searchbtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) { 
+				imm.hideSoftInputFromWindow(et.getWindowToken(), 0);
+				new LoadAddStockListTask().execute(et.getText().toString());
+			}
+		});
+		addpb = (ProgressBar) rootView.findViewById(R.id.progressBar2);
+		addpb.setVisibility(View.GONE);
+
 		return rootView;
 	}
 
+	public void onBackPressed() {
+    	addstock = true;
+        AnimationSet animation = new AnimationSet(true);
+		animation.setDuration(200);
+		animation.addAnimation(new AlphaAnimation(1, 0));
+		animation.addAnimation(new TranslateAnimation(0, 200, 0, 0));
+		animation.setInterpolator(new AccelerateDecelerateInterpolator());
+		animation.setAnimationListener(new AnimationListener() {
+			@Override public void onAnimationStart(Animation animation) {}
+			@Override public void onAnimationRepeat(Animation animation) {}
+			@Override public void onAnimationEnd(Animation animation) {
+				sbox.setVisibility(View.GONE);
+			}
+		});
+		sbox.startAnimation(animation);
+        AnimationSet btanim = new AnimationSet(true);
+		btanim.setDuration(800);
+		btanim.addAnimation(new RotateAnimation(45, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f));
+		btanim.setInterpolator(new AccelerateDecelerateInterpolator());
+		btanim.setFillAfter(true);
+		ValueAnimator va = ValueAnimator.ofObject(new ArgbEvaluator(), Color.RED, Color.parseColor("#FF99CC00"));
+		va.setDuration(800);
+		va.addUpdateListener(new AnimatorUpdateListener() {
+			@Override public void onAnimationUpdate(ValueAnimator animation) {
+				addbt.setColor((int) animation.getAnimatedValue());
+			}
+		});
+		addbt.startAnimation(btanim);
+		va.start();
+		addadapter.clear();
+		addadapter.notifyDataSetChanged();
+		et.setText("");
+        lv.setEnabled(true);
+        lv.setAlpha(1f);
+	}
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0xADD && resultCode == Activity.RESULT_OK) {
@@ -176,6 +301,8 @@ public class Fragment1 extends Fragment {
 		if(!list.containsKey(s.getId())){
 			//ADD NEW
 			list.put(s.getId(), s);
+			new LoadListTask().execute(list);
+			new SaveTask().execute((Void) null);
 		}
 		else if (!isEdit){
 			Toast.makeText(getActivity(), "Stock already added!", Toast.LENGTH_SHORT).show();
@@ -329,5 +456,86 @@ public class Fragment1 extends Fragment {
 	@SuppressWarnings("unchecked")
 	public void update(){
 		new LoadListTask().execute(list);
+	}
+	
+	
+	private class LoadAddStockListTask extends AsyncTask<String, Stock, Void> {
+
+		@Override
+	    protected void onPostExecute(Void result) {
+		    addadapter.notifyDataSetChanged();
+		    addpb.setVisibility(View.GONE);
+	    }
+
+	    @Override
+	    protected void onPreExecute() {
+	        addadapter.clear();
+	        addlist.clear();
+	        addpb.setVisibility(View.VISIBLE);
+	    }
+
+		@Override
+	    protected Void doInBackground(String... params) {
+			String q = params[0];
+	        JSONParser jParser = new JSONParser(); // get JSON data from URL JSONArray json = jParser.getJSONFromUrl(url);
+	        JSONArray json = jParser.getJSONFromUrl("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=" + q + "&callback=YAHOO.Finance.SymbolSuggest.ssCallback", q.length());
+
+	        for (int i = 0; i < json.length(); i++) {
+
+				try {
+					JSONObject c = json.getJSONObject(i);
+					String id = c.getString("symbol");
+					publishProgress(getStock(id));
+				}
+				catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+	        return null;
+	    }
+
+	    @Override
+	    protected void onProgressUpdate(Stock... s) {
+	        addlist.add(s[0]);
+	    }
+	    
+	    protected Stock getStock(String id){
+	    	Stock item = new Stock(id, 0, 0);
+		    HttpClient httpClient = new DefaultHttpClient();
+	        HttpContext localContext = new BasicHttpContext();
+			HttpGet httpGet = new HttpGet("http://download.finance.yahoo.com/d/quotes.csv?s=" + Uri.encode(id) + "&f=n0l1&e=.csv");
+			HttpResponse response = null;
+			try {
+				response = httpClient.execute(httpGet, localContext);
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			InputStream is = null;
+			try {
+					is = response.getEntity().getContent();
+			} catch (IllegalStateException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			try {
+				CSVReader csv = new CSVReader(reader);
+				String[] data = csv.readNext();
+				String name = data[0];
+				item.setId(id + name);
+				item.setLastPrice(Double.parseDouble(data[1]));
+				item.setQuantity(id.length());
+			} catch (IOException ex) {
+			} finally {
+				try {
+					is.close();
+				} catch (IOException e) {}
+			}
+			return item;
+	    }
 	}
 }

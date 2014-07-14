@@ -47,7 +47,7 @@ public class CircleButton extends ImageView {
 		init(context, attrs);
 	}
 
-	@Override
+/*	@Override
 	public void setPressed(boolean pressed) {
 		super.setPressed(pressed);
 
@@ -61,7 +61,7 @@ public class CircleButton extends ImageView {
 			hidePressedRing();
 		}
 	}
-
+*/
 	@Override
 	protected void onDraw(Canvas canvas) {
 		canvas.drawCircle(centerX, centerY, pressedRingRadius + animationProgress, focusPaint);
