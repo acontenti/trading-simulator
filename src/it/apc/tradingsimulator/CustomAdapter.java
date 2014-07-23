@@ -27,7 +27,7 @@ public class CustomAdapter extends ArrayAdapter<StockRow> {
 	        vi = LayoutInflater.from(getContext());
 	        v = vi.inflate(R.layout.stocksrow, null);
 	    }
-	
+	    
 	    StockRow p = getItem(position);
 	
 	    if (p != null) {

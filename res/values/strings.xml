@@ -77,5 +77,6 @@
     <string name="welcome_message">Welcome to Trading Simulator</string>
     <string name="set_initial_balance_message">Set your initial balance</string>
     <string name="title_activity_chart">ChartActivity</string>
+    <string name="error_balance_shortsale">Your balance is not sufficient to cover your short sale.</string>
 
 </resources>
