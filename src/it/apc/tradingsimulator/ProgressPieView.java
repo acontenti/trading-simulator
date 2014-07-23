@@ -1,5 +1,7 @@
 package it.apc.tradingsimulator;
 
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -10,14 +12,12 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Handler;
+import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.support.v4.util.LruCache;
 import android.view.View;
-import android.view.animation.Animation.AnimationListener;
+import android.view.animation.DecelerateInterpolator;
 
 public class ProgressPieView extends View {
 
@@ -73,9 +73,7 @@ public class ProgressPieView extends View {
 
     private int mViewSize;
 	
-	private final Handler mProgressHandler = new Handler();
-
-    public ProgressPieView(Context context) {
+	public ProgressPieView(Context context) {
         this(context, null);
     }
 
@@ -251,26 +249,44 @@ public class ProgressPieView extends View {
     }
 
     /**
-     * Animates a progress fill of the view, using a Handler and a Runnable.
+     * Animates a progress fill of the view.
+     * @param repeat 
      */
-    public void animateProgressFill(int speed){
-    	new ProgressAnimationTask().execute(speed);
+    public void animateProgressFill(int speed, int repeat){
+		ValueAnimator va = ValueAnimator.ofInt(0, 101);
+		va.setDuration(speed);
+		va.setInterpolator(new DecelerateInterpolator());
+		va.addUpdateListener(new AnimatorUpdateListener() {
+			@Override public void onAnimationUpdate(ValueAnimator animation) {
+				setProgress((int) animation.getAnimatedValue());
+			}
+		});
+		va.setRepeatCount(repeat);
+		va.start();
     	invalidate();
     }
 
     /**
-     * Animates a progress fill of the view, using a Handler and a Runnable.
+     * Animates a progress fill of the view.
      * @param animateTo - the progress value the animation should stop at
      */
-    public void animateProgressFill(int animateTo, int speed){
+    public void animateProgressFill(int animateTo, int speed, int repeat){
         if (animateTo > mMax) {
             throw new IllegalArgumentException(
                     String.format("Animation progress (%d) is greater than the max progress (%d) ", animateTo, mMax));
         }
 
-        AnimationRunnable runnable = new AnimationRunnable(animateTo, speed);
-        runnable.run();
-        invalidate();
+		ValueAnimator va = ValueAnimator.ofInt(0, animateTo);
+		va.setInterpolator(new DecelerateInterpolator());
+		va.setDuration(speed);
+		va.addUpdateListener(new AnimatorUpdateListener() {
+			@Override public void onAnimationUpdate(ValueAnimator animation) {
+				setProgress((int) animation.getAnimatedValue());
+			}
+		});
+		va.setRepeatCount(repeat);
+		va.start();
+    	invalidate();
     }
 
     /**
@@ -544,10 +560,10 @@ public class ProgressPieView extends View {
     public void setOnProgressListener(OnProgressListener listener) {
         mListener = listener;
     }
-
-    /**
+/*
+    *//**
      * Runnable used by the Handler to perform the fill animation.
-     */
+     *//*
     private class AnimationRunnable implements Runnable {
 
         private int mAnimateTo;
@@ -600,5 +616,5 @@ public class ProgressPieView extends View {
 			super.onPostExecute(result);
 		}
     }
-
+*/
 }

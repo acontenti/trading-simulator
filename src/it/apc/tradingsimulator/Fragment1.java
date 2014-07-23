@@ -41,13 +41,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -57,7 +58,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -68,12 +68,12 @@ public class Fragment1 extends Fragment {
 	ArrayList<StockRow> rowlist = new ArrayList<StockRow>();
 	HashMap<String, Stock> list = new HashMap<String, Stock>();
 	private CustomAdapter adapter;
-	private ProgressBar pb;
+	private ProgressPieView pb;
 	private OnListChangedListener mCallback;
 	private double balance;
 	private ArrayList<Stock> addlist = new ArrayList<Stock>();
 	private AddStockCustomAdapter addadapter;
-	private ProgressBar addpb;
+	private ProgressPieView addpb;
 	RelativeLayout sbox;
 	private EditText et;
 	private CircleButton addbt;
@@ -109,10 +109,10 @@ public class Fragment1 extends Fragment {
 			public void onScroll(AbsListView v, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 				if(prevlvy < firstVisibleItem && animfinished && addbt.getVisibility() == View.VISIBLE){
 					AnimationSet animation = new AnimationSet(true);
-					animation.setDuration(150);
-					animation.addAnimation(new AlphaAnimation(1, 0));
-					animation.addAnimation(new TranslateAnimation(0, 0, 0, 100));
-					animation.setInterpolator(new AccelerateDecelerateInterpolator());
+					animation.setDuration(200);
+					animation.addAnimation(new AlphaAnimation(1, 0f));
+					animation.addAnimation(new TranslateAnimation(0, 0, 0, 200));
+					animation.setInterpolator(new AccelerateInterpolator());
 					animation.setAnimationListener(new AnimationListener() {
 						@Override public void onAnimationStart(Animation animation) {}
 						@Override public void onAnimationRepeat(Animation animation) {}
@@ -126,10 +126,10 @@ public class Fragment1 extends Fragment {
 				}
 				if(prevlvy > firstVisibleItem && animfinished && addbt.getVisibility() == View.GONE){
 					AnimationSet animation = new AnimationSet(true);
-					animation.setDuration(150);
-					animation.addAnimation(new AlphaAnimation(0, 1));
-					animation.addAnimation(new TranslateAnimation(0, 0, 100, 0));
-					animation.setInterpolator(new AccelerateDecelerateInterpolator());
+					animation.setDuration(200);
+					animation.addAnimation(new AlphaAnimation(0f, 1));
+					animation.addAnimation(new TranslateAnimation(0, 0, 200, 0));
+					animation.setInterpolator(new AccelerateInterpolator());
 					animation.setAnimationListener(new AnimationListener() {
 						@Override public void onAnimationStart(Animation animation) {
 							addbt.setVisibility(View.VISIBLE);
@@ -147,7 +147,9 @@ public class Fragment1 extends Fragment {
 		});
 
 		adapter = new CustomAdapter(getActivity(), R.layout.stocksrow, rowlist);
-		pb = (ProgressBar) rootView.findViewById(R.id.progressBar);
+		
+		pb = (ProgressPieView) rootView.findViewById(R.id.progressBar);
+		pb.animateProgressFill(1000, ValueAnimator.INFINITE);
 		pb.setVisibility(View.GONE);
 		
 		new LoadListTask().execute(list);
@@ -174,9 +176,10 @@ public class Fragment1 extends Fragment {
 					lv.setEnabled(false);
 					lv.setAlpha(0.25f);
 					AnimationSet animation = new AnimationSet(true);
-					animation.setDuration(200);
+					animation.setDuration(400);
 					animation.addAnimation(new AlphaAnimation(0, 1));
 					animation.addAnimation(new TranslateAnimation(500, 0, 0, 0));
+					animation.addAnimation(new ScaleAnimation(0, 1, 0, 1, ScaleAnimation.ABSOLUTE, ((View) v.getParent().getParent()).getWidth() / 3 * 2, ScaleAnimation.ABSOLUTE, ((View) v.getParent().getParent()).getHeight()));
 					animation.setInterpolator(new AccelerateDecelerateInterpolator());
 					animation.setAnimationListener(new AnimationListener() {
 						@Override public void onAnimationStart(Animation animation) {
@@ -241,7 +244,8 @@ public class Fragment1 extends Fragment {
 				new LoadAddStockListTask().execute(et.getText().toString());
 			}
 		});
-		addpb = (ProgressBar) rootView.findViewById(R.id.progressBar2);
+		addpb = (ProgressPieView) rootView.findViewById(R.id.progressBar2);
+		addpb.animateProgressFill(1000, ValueAnimator.INFINITE);
 		addpb.setVisibility(View.GONE);
 
 		return rootView;
@@ -250,9 +254,10 @@ public class Fragment1 extends Fragment {
 	public void onBackPressed() {
     	addstock = true;
         AnimationSet animation = new AnimationSet(true);
-		animation.setDuration(200);
+		animation.setDuration(400);
 		animation.addAnimation(new AlphaAnimation(1, 0));
 		animation.addAnimation(new TranslateAnimation(0, 200, 0, 0));
+		animation.addAnimation(new ScaleAnimation(1, 0, 1, 0, ScaleAnimation.RELATIVE_TO_SELF, 1, ScaleAnimation.RELATIVE_TO_SELF, 1));
 		animation.setInterpolator(new AccelerateDecelerateInterpolator());
 		animation.setAnimationListener(new AnimationListener() {
 			@Override public void onAnimationStart(Animation animation) {}
@@ -369,6 +374,8 @@ public class Fragment1 extends Fragment {
 	    protected void onPostExecute(Void unused) {
 	    	lv.setEnabled(true);
 	        lv.setAlpha(1f);
+	    	addbt.setEnabled(true);
+	        addbt.setAlpha(1f);
 	        pb.setVisibility(View.GONE);
 	        Collections.sort(rowlist, new Comparator<StockRow>() {
 	            public int compare(StockRow result1, StockRow result2) {
@@ -384,6 +391,8 @@ public class Fragment1 extends Fragment {
 	    protected void onPreExecute() {
 	        lv.setEnabled(false);
 	        lv.setAlpha(0.25f);
+	    	addbt.setEnabled(false);
+	        addbt.setAlpha(0f);
 	        pb.setVisibility(View.VISIBLE);
 	        mCallback.OnListLoad();
 	        adapter.clear();

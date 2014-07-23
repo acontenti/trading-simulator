@@ -18,6 +18,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -37,7 +38,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -46,7 +46,7 @@ public class StockActivity extends Activity {
 	private Stock stock;
 	private String id;
 	private long q = 0;
-	private ProgressBar pb;
+	private ProgressPieView pb;
 	private LinearLayout sv;
 	HashMap<String, Object> data = new HashMap<String, Object>();
 	HashMap<String, String> time = new HashMap<String, String>();
@@ -119,7 +119,8 @@ public class StockActivity extends Activity {
 				}
 			}
 		});
-		pb = (ProgressBar) findViewById(R.id.progressBar);
+		pb = (ProgressPieView) findViewById(R.id.progressBar);
+		pb.animateProgressFill(1000, ValueAnimator.INFINITE);
 		pb.setVisibility(View.GONE);
 		sv = (LinearLayout) findViewById(R.id.box);
 		nf = NumberFormat.getInstance();
@@ -216,6 +217,7 @@ public class StockActivity extends Activity {
 		Intent bi = new Intent(this, SellActivity.class);
 		bi.putExtra("price", price);
 		bi.putExtra("q", q);
+		bi.putExtra("balance", balance);
 		int[] screenLocation = new int[2];
         v.getLocationOnScreen(screenLocation);
         Bundle scaleBundle = ActivityOptions.makeScaleUpAnimation(v, screenLocation[0], screenLocation[1], v.getWidth(), v.getHeight()).toBundle();

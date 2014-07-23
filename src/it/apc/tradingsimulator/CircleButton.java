@@ -29,7 +29,6 @@ public class CircleButton extends ImageView {
 
 	private int pressedRingWidth;
 	private int defaultColor = Color.BLACK;
-	private int pressedColor;
 	private ObjectAnimator pressedAnimator;
 
 	public CircleButton(Context context) {
@@ -89,23 +88,13 @@ public class CircleButton extends ImageView {
 
 	public void setColor(int color) {
 		this.defaultColor = color;
-		this.pressedColor = getHighlightColor(color, PRESSED_COLOR_LIGHTUP);
+		getHighlightColor(color, PRESSED_COLOR_LIGHTUP);
 
 		circlePaint.setColor(defaultColor);
 		focusPaint.setColor(defaultColor);
 		focusPaint.setAlpha(PRESSED_RING_ALPHA);
 
 		this.invalidate();
-	}
-
-	private void hidePressedRing() {
-		pressedAnimator.setFloatValues(pressedRingWidth, 0f);
-		pressedAnimator.start();
-	}
-
-	private void showPressedRing() {
-		pressedAnimator.setFloatValues(animationProgress, pressedRingWidth);
-		pressedAnimator.start();
 	}
 
 	private void init(Context context, AttributeSet attrs) {

@@ -3,6 +3,7 @@ package it.apc.tradingsimulator;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +30,7 @@ public class Fragment2 extends Fragment {
 
 	private LineGraph lg;
 	private PieGraph pg;
-	private ProgressBar pb;
+	private ProgressPieView pb;
 	ArrayList<StockRow> list = new ArrayList<StockRow>();
 	private boolean firstrun = true;
 	private LinearLayout box;
@@ -58,7 +58,8 @@ public class Fragment2 extends Fragment {
 		box = (LinearLayout) rootView.findViewById(R.id.box);
 		box.setVisibility(View.INVISIBLE);
 		box.setEnabled(false);
-		pb = (ProgressBar) rootView.findViewById(R.id.progressBar);
+		pb = (ProgressPieView) rootView.findViewById(R.id.progressBar);
+		pb.animateProgressFill(1000, ValueAnimator.INFINITE);
 		VerticalViewPager vvp = (VerticalViewPager) rootView.findViewById(R.id.verticalViewPager1);
 		WizardPagerAdapter a = new WizardPagerAdapter();
 		vvp.setAdapter(a);
@@ -88,10 +89,10 @@ public class Fragment2 extends Fragment {
 		shvt.setText(nf.format(sharesvalue) + " $");
 		totvalue = sharesvalue + balance;
 		tvlt.setText(nf.format(totvalue) + " $");
-		change = balance - initbalance;
+		change = totvalue - initbalance;
 		pchange = change / initbalance * 100;
 		String sign = (change < 0 ? "" : "+");
-		chpt.setText(sign + nf.format(change) + " $     (" + sign + nf.format(pchange) + "%)");
+		chpt.setText(sign + nf.format(change) + " $      (" + sign + nf.format(pchange) + "%)");
 		int color = (change < 0 ? Color.RED : Color.parseColor("#77AA11"));
 		chpt.setTextColor(color);
 		
@@ -114,12 +115,15 @@ public class Fragment2 extends Fragment {
 	}
 
 	private void updateChart() {
+		if (lg != null) {
+//			lg.removeAllLines();
+		}
 		if (pg != null) {
 			pg.removeSlices();
 			for (StockRow s : list) {
 				if (s.getQuantity() != 0) {
 					PieSlice slice = new PieSlice();
-					slice.setValue(Math.abs(s.getQuantity()));
+					slice.setValue((float) Math.abs(s.getQuantity() * s.getPrice()));
 					slice.setColor(Color.HSVToColor(new float[] {hue , 0.7f, 0.9f}));
 					hue += 97;
 					hue %= 360;

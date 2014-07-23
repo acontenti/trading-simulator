@@ -2,22 +2,15 @@ package it.apc.tradingsimulator;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *

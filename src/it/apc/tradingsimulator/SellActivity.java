@@ -4,6 +4,8 @@ import java.text.NumberFormat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +28,7 @@ public class SellActivity extends Activity {
 	private TextView pt;
 	protected long q;
 	protected long pq;
+	private double balance;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class SellActivity extends Activity {
 		qe = (EditText) findViewById(R.id.editText);
 		price = getIntent().getDoubleExtra("price", 0);
 		q = getIntent().getLongExtra("q", 0);
+		balance = getIntent().getDoubleExtra("balance", 0);
 		nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(2);
 		nf.setMinimumFractionDigits(2);
@@ -62,7 +66,7 @@ public class SellActivity extends Activity {
 		qe.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable s) {
-				if (s.length() > 0) {
+				if (s.length() > 0 && !(Long.parseLong(s.toString()) == 0)) {
 					pq = Long.parseLong(s.toString());
 					bb.setEnabled(true);
 				}
@@ -74,6 +78,17 @@ public class SellActivity extends Activity {
 				tt.setText(nf.format(bill) + "$");
 				if (pq > q || q <= 0) {
 					et.setVisibility(View.VISIBLE);
+					if (bill > balance) {
+						bb.setEnabled(false);
+						et.setTextColor(Color.RED);
+						et.setText(getString(R.string.error_balance_shortsale));
+					}
+					else {
+						bb.setEnabled(bb.isEnabled());
+						getResources();
+						et.setTextColor(Resources.getSystem().getColor(android.R.color.holo_orange_dark));
+						et.setText(getString(R.string.warning_shortsell));
+					}
 				}
 				else {
 					et.setVisibility(View.GONE);
